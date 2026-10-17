@@ -1,8 +1,8 @@
 import type { Logger } from '../log/logger.ts';
 import type { Transcript } from '../log/transcript.ts';
-import { asText } from '../text/json.ts';
+import { asText, isRecord } from '../text/json.ts';
 
-export type ControlActionName = 'stop' | 'skip' | 'heartbeat';
+type ControlActionName = 'stop' | 'skip' | 'heartbeat';
 
 /** The turn-end `StructuredOutput`: what to do next, and why. */
 export interface ControlAction {
@@ -26,6 +26,8 @@ export interface TurnResult {
   abortedReason?: AbortReason | undefined;
   /** Error text when the result event reported `is_error` (the API rejected the turn). */
   apiError?: string | undefined;
+  /** `<subtype>: <errors>` when Claude Code ended the turn itself (retries spent, an execution error); the session is fine. */
+  cliError?: string | undefined;
 }
 
 /** Tools whose effect the user can perceive; text without any of them was "dropped". */
@@ -96,7 +98,7 @@ export class Turn {
 
   /** Close the turn on its `result` event. */
   finish(event: Record<string, unknown>): TurnResult {
-    const apiError = !event.is_error ? undefined : typeof event.result === 'string' && event.result ? event.result : 'unknown API error';
+    const failure = failureOf(event);
     this.applyResultPayload(event);
     const result: TurnResult = {
       textBlocks: this.textBlocks,
@@ -104,7 +106,7 @@ export class Turn {
       stderrTail: this.stderr.slice(-10),
       userVisibleAction: this.userVisible,
       droppedText: this.textBlocks.length > 0 && !this.userVisible,
-      apiError,
+      ...failure,
     };
     this.transcript.ccDone(this.control?.action, this.control?.reason);
     return result;
@@ -146,8 +148,13 @@ export class Turn {
   }
 }
 
-export const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+/** How the result event says the turn failed: Claude Code ended it itself (an `error_*` subtype), or the API rejected it. */
+function failureOf(event: Record<string, unknown>): Pick<TurnResult, 'apiError' | 'cliError'> {
+  const subtype = asText(event.subtype ?? '');
+  if (subtype.startsWith('error_')) return { cliError: `${subtype}: ${Array.isArray(event.errors) ? event.errors.map(asText).join('; ') : ''}` };
+  if (!event.is_error) return {};
+  return { apiError: typeof event.result === 'string' && event.result ? event.result : 'unknown API error' };
+}
 
 function contentBlocks(event: Record<string, unknown>): Record<string, unknown>[] {
   const content = isRecord(event.message) ? event.message.content : undefined;

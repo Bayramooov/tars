@@ -11,15 +11,14 @@ export interface ChildExit {
 }
 
 export interface ChildProcess {
-  readonly pid: number | undefined;
   /** Resolves once the process is running; rejects when it could not start (e.g. ENOENT). */
   readonly spawned: Promise<void>;
   /** Resolves once the process has exited and both output streams are drained. */
   readonly exited: Promise<ChildExit>;
   /** Write one line to stdin, honouring backpressure. Throws when stdin is gone. */
   write(line: string): Promise<void>;
-  /** SIGTERM the whole process group, SIGKILL after `graceMs`, resolve on exit. */
-  kill(graceMs?: number): Promise<void>;
+  /** SIGTERM the whole process group, SIGKILL after 5 s, resolve on exit. */
+  kill(): Promise<void>;
   /** Immediate SIGKILL of the group, for fatal-exit paths that can't wait. */
   killNow(): void;
 }
@@ -52,16 +51,15 @@ export function spawnChild(argv: readonly string[], onStdout: (line: string) => 
   };
 
   return {
-    pid: child.pid,
     spawned,
     exited,
     async write(line) {
       if (done || !child.stdin.writable) throw new Error('claude stdin is closed');
       if (!child.stdin.write(line)) await Promise.race([once(child.stdin, 'drain'), exited]);
     },
-    async kill(graceMs = 5000) {
+    async kill() {
       signalGroup('SIGTERM');
-      const timer = setTimeout(() => signalGroup('SIGKILL'), graceMs);
+      const timer = setTimeout(() => signalGroup('SIGKILL'), 5000);
       await exited;
       clearTimeout(timer);
     },

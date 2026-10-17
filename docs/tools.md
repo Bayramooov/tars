@@ -10,14 +10,14 @@ Always on, served by the local MCP server as `mcp__tars__<name>`. Each is a fact
 
 | Tool | What it does |
 |---|---|
-| `telegram_send_message` | Send a text message (Markdown, converted to Telegram HTML). **The only way the user sees anything** — a plain text block reaches nobody. |
-| `telegram_reply_to_message` | Reply to a specific message (threads in groups). |
+| `telegram_send_message` | Send a new text message (Markdown, converted to Telegram HTML) when there's nothing to reply to, e.g. a reminder. A plain text block reaches nobody until the engine rescues it. |
+| `telegram_reply_to_message` | Reply to a specific message — the default way to answer anyone. |
 | `telegram_edit_message` | Edit one of the bot's earlier messages — no push notification, good for progress updates. |
 | `telegram_delete_message` | Delete a message the bot may delete (usually its own). |
 | `telegram_add_reaction` | React to a message with an emoji — often better than an "ok" reply in groups. |
 | `telegram_create_poll` | Send a poll: regular or quiz, multi-answer, anonymous or not, auto-close, reply-to. |
 | `telegram_stop_poll` | Close a poll early and return the tallies. |
-| `telegram_read_attachment` | Read a photo or document the user sent. The dispatcher saves attachments under `data/attachments/` and marks them `[attachment: <path> …]`. Images come back as image blocks (the bot sees them), text files as UTF-8, PDFs as their text with `--- page N ---` markers; text and PDFs cap at 64 KiB. GIFs and videos aren't supported. |
+| `telegram_read_attachment` | Read a photo or document the user sent. The dispatcher saves attachments under `data/attachments/` and marks them `[attachment: <path> …]`. Images come back as image blocks (the bot sees them), text files as UTF-8, PDFs as their text with `--- page N ---` markers; text and PDFs cap at 64 KiB. Telegram's GIF animations and videos aren't supported. |
 | `telegram_send_memory_document` | Send a memory file as a downloadable document. |
 | `render_html` | Render HTML to a PNG in `data/renders/` with headless Chromium — for tables, charts and diffs Markdown can't hold. No network: inline any CSS/JS. |
 | `render_latex` | Render a LaTeX expression (without `$$`) to a PNG via KaTeX, loaded from `cdn.jsdelivr.net` only. |
@@ -108,7 +108,7 @@ description: One sentence on what it does AND when to use it (up to 1024 charact
 The playbook: preconditions, what to read, what to decide, which tools to call.
 ```
 
-The name must match the directory: lowercase `a-z0-9` and single hyphens. Restart and it's listed. To run it on a schedule, add a [`default-reminders.json`](deployment.md#default-remindersjson) entry whose `text` is `<skill name="your-skill-name">run</skill>`. A malformed `SKILL.md` is skipped and the boot log says why. See `skills/self-reflection/SKILL.md` for a worked example, and [how skills run](architecture.md#memory-skills-and-self-editing).
+The name must match the directory: lowercase `a-z0-9` and single hyphens. `skill_list` shows it at once; the system prompt's index picks it up at the next `claude` start (a restart, a respawn or `/reset_session`). To run it on a schedule, add a [`default-reminders.json`](deployment.md#default-remindersjson) entry whose `text` is `<skill name="your-skill-name">run</skill>`. A malformed `SKILL.md` is skipped and the boot log says why. See `skills/self-reflection/SKILL.md` for a worked example, and [how skills run](architecture.md#memory-skills-and-self-editing).
 
 ### Reminders
 

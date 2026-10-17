@@ -1,5 +1,5 @@
 /** Placeholder that replaces every redacted credential. */
-export const REDACTION = '[REDACTED]';
+const REDACTION = '[REDACTED]';
 
 // Unicode-aware word boundaries: a Cyrillic letter is a word character
 // (JS's `\b` would see a boundary there).
@@ -22,7 +22,7 @@ const PATTERNS = [
   // JWTs
   String.raw`${B}eyJ[A-Za-z0-9_\-]+\.eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+${B}`,
   // PEM private-key blocks
-  String.raw`-----BEGIN (?:RSA |EC |OPENSSH |PGP |DSA |)PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH |PGP |DSA |)PRIVATE KEY-----`,
+  String.raw`-----BEGIN (?:RSA |EC |OPENSSH |PGP |DSA |)PRIVATE KEY-----(?:[^-]|-(?!----))*?-----END (?:RSA |EC |OPENSSH |PGP |DSA |)PRIVATE KEY-----`,
   // DSNs with an embedded password
   String.raw`${B}(postgres|postgresql|mysql|mariadb|mongodb|mongodb\+srv|redis|amqp|amqps|rediss|ftp|ftps|sftp|ssh|smb|ldap|ldaps)://[^\s:/@]+:[^\s:/@]+@[^\s]+`,
 ].map((source, i) => new RegExp(source, i === 0 ? 'giu' : 'gu'));

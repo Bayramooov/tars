@@ -1,7 +1,8 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 import { parseFrontmatter, renderFrontmatter, requireNameAndDescription } from '../text/frontmatter.ts';
+import { writeAtomic } from './atomic.ts';
 import { resolveUnderRoot } from './paths.ts';
 
 /** Cap on one memory file in UTF-8 bytes: for writes, appends and read truncation. */
@@ -151,7 +152,7 @@ export class MemoryStore {
 
   private save(file: string, text: string): void {
     mkdirSync(dirname(file), { recursive: true });
-    writeFileSync(file, text);
+    writeAtomic(file, Buffer.from(text));
     this.readPaths.add(file);
   }
 }

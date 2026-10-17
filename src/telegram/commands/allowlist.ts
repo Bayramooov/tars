@@ -1,10 +1,8 @@
 import type { Logger } from '../../log/logger.ts';
-import { loadAccess, type Policy, saveAccess } from '../access.ts';
+import { loadAccess, POLICIES, type Policy, saveAccess } from '../access.ts';
 
 // The access-management commands: each reads `access.json` fresh, edits it
 // and returns the reply text. Additions never touch the policy.
-
-const POLICIES: readonly string[] = ['owner_only', 'allowlist', 'open'];
 
 /** `/allow <user|group> <id>`: add a DM user or a group (no write when already listed). */
 export function allow(path: string, args: string[], log: Logger): string {

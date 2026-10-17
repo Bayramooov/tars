@@ -13,12 +13,11 @@ const MAX_DM = 4000;
 /**
  * Turns every ERROR-or-worse log record into an owner DM — one path for all
  * operator alerts — with a reference to the message the current turn was
- * answering. Records logged while a DM is being sent are dropped, so a
- * failing send can't cascade into more DMs.
+ * answering. DMs go out one at a time, in order; `send` never rejects.
  */
 export class OwnerNotifier {
   private readonly lastSent = new Map<string, number>();
-  private sending: Promise<void> | undefined;
+  private sending: Promise<void> = Promise.resolve();
   private readonly send: (html: string) => Promise<void>;
   private readonly causeLinks: () => string;
 
@@ -28,16 +27,16 @@ export class OwnerNotifier {
   }
 
   readonly sink: LogSink = (record) => {
-    if (LEVELS[record.level] < LEVELS.ERROR || this.sending) return;
+    if (LEVELS[record.level] < LEVELS.ERROR) return;
     const text = this.withCause(formatRecord(record));
     const now = record.time.getTime();
     for (const [msg, at] of this.lastSent) if (now - at >= COOLDOWN_MS) this.lastSent.delete(msg);
     if (this.lastSent.has(text)) return;
     this.lastSent.set(text, now);
-    this.sending = this.send(text).finally(() => (this.sending = undefined));
+    this.sending = this.sending.then(() => this.send(text));
   };
 
-  /** Wait for an in-flight DM (e.g. the give-up alert before exiting). */
+  /** Wait for the queued DMs (e.g. the give-up alert before exiting). */
   async flush(): Promise<void> {
     await this.sending;
   }

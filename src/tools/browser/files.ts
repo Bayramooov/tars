@@ -6,7 +6,6 @@ import type { Logger } from '../../log/logger.ts';
 import { defineTool, type Tool } from '../../mcp/tool.ts';
 import type { RenderStore } from '../../stores/renders.ts';
 import { cpSlice } from '../../text/clip.ts';
-import { decodeDataUri } from './datauri.ts';
 
 type Session = Pick<BrowserSession, 'requirePage'>;
 type Store = Pick<RenderStore, 'save'>;
@@ -45,7 +44,8 @@ export function downloadTool(session: Session, store: Store, log: Logger): Tool 
     }),
     run: async ({ url, title }) => {
       const page = session.requirePage(); // required for data: URIs too
-      const bytes = url.startsWith('data:') ? decodeDataUri(url) : await fetchBytes(page.request, url);
+      // Node decodes a data: URI locally, exactly as browsers do.
+      const bytes = url.startsWith('data:') ? Buffer.from(await (await fetch(url)).arrayBuffer()) : await fetchBytes(page.request, url);
       const path = store.save(title, bytes);
       log.info(`browser downloaded ${cpSlice(url, 60).text} → ${path} (${bytes.length} bytes)`);
       return { content: `downloaded to ${path} (${bytes.length} bytes). Pass this path to telegram_send_photo to deliver it.`, data: { path, size_bytes: bytes.length } };

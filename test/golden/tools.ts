@@ -21,7 +21,7 @@ import { memoryLogger } from '../helpers/log.ts';
 import { tempDir } from '../helpers/tmp.ts';
 import { loadGolden } from './load.ts';
 
-export interface GoldenTool {
+interface GoldenTool {
   name: string;
   description: string;
   inputSchema: Record<string, unknown>;

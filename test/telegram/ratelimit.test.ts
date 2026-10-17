@@ -11,7 +11,7 @@ const open = () => openDatabase(join(tempDir(), 'h.db'), memoryLogger());
 const OWNER = 1;
 
 describe('DM rate limit', () => {
-  it('counts per user per wall-clock minute, notifies once, and prunes old buckets on overflow', () => {
+  it('counts per user per wall-clock minute, notifies once, and prunes old buckets on every check', () => {
     const db = open();
     const check = (userId: number, now: number) => checkRateLimit(db, { userId, ownerId: OWNER, limit: 2 }, now);
     expect(check(7, 6000.9)).toEqual({ limited: false });
@@ -22,6 +22,7 @@ describe('DM rate limit', () => {
     expect(check(7, 6060)).toEqual({ limited: false });
     db.prepare('INSERT INTO rate_limits(user_id, bucket_start, count, notice_sent) VALUES (9, 5000, 1, 0)').run();
     check(7, 6061);
+    expect(db.prepare('SELECT count(*) FROM rate_limits WHERE user_id = 9').pluck().get()).toBe(0);
     check(7, 6062);
     const buckets = db.prepare('SELECT user_id, bucket_start, count, notice_sent FROM rate_limits ORDER BY user_id, bucket_start').raw().all();
     expect(buckets).toEqual([[7, 6000, 4, 1], [7, 6060, 3, 1], [8, 6000, 1, 0]]);

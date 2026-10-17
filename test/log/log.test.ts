@@ -21,9 +21,7 @@ describe('log formats', () => {
   });
 
   it('JSON: one object per line with an ISO timestamp', () => {
-    expect(formatJson(record({ event: 'turn', data: { n: 1 } }))).toBe(
-      '{"ts":"2026-10-17T01:02:03.456Z","level":"INFO","logger":"tars.engine","msg":"turn done","event":"turn","data":{"n":1}}',
-    );
+    expect(formatJson(record())).toBe('{"ts":"2026-10-17T01:02:03.456Z","level":"INFO","logger":"tars.engine","msg":"turn done"}');
     expect(formatJson(record({ msg: 'Ўзбек' }))).toContain('"msg":"Ўзбек"');
   });
 
@@ -74,17 +72,16 @@ describe('owner notifier', () => {
     for (const c of golden.to_plain_text) expect(htmlToPlainText(c.in)).toBe(c.out);
   });
 
-  it('DMs errors once per minute with the cause link, never re-entrantly', async () => {
+  it('DMs errors once per minute with the cause link, in order, also while one is in flight', async () => {
     const sent: string[] = [];
-    let release: () => void = () => {};
-    const notifier = new OwnerNotifier((html) => new Promise<void>((r) => ((release = r), sent.push(html))), () => '• message 5 from @a (id 1)');
+    const notifier = new OwnerNotifier((html) => Promise.resolve(void sent.push(html)), () => '• message 5 from @a (id 1)');
     notifier.sink(record({ level: 'INFO' }));
     notifier.sink(record({ level: 'ERROR', msg: 'boom' }));
     notifier.sink(record({ level: 'ERROR', msg: 'during send' }));
-    release();
     await notifier.flush();
     notifier.sink(record({ level: 'ERROR', msg: 'boom' }));
-    expect(sent).toEqual(['⚠️ ERROR — tars.engine\nboom\n\n• message 5 from @a (id 1)']);
+    await notifier.flush();
+    expect(sent).toEqual(['⚠️ ERROR — tars.engine\nboom\n\n• message 5 from @a (id 1)', '⚠️ ERROR — tars.engine\nduring send\n\n• message 5 from @a (id 1)']);
   });
 
   it('cuts a DM with its cause links at 4000 characters', async () => {

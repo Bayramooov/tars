@@ -112,7 +112,7 @@ export class SkillsStore {
 }
 
 /** Check a SKILL.md against the Agent Skills rules for directory `dirName`; returns the raw description. */
-export function validateSkill(text: string, dirName: string): string {
+function validateSkill(text: string, dirName: string): string {
   const { meta } = parseFrontmatter(text, 'SKILL.md');
   requireNameAndDescription(meta, 'SKILL.md');
   const name = meta.name as string;

@@ -25,7 +25,7 @@ export class FakeApiResponse {
   };
 }
 
-export interface FakeElement {
+interface FakeElement {
   innerText?: string;
   getAttribute(name: string): string | null;
 }
@@ -103,7 +103,7 @@ export class FakePage {
 }
 
 /** Stands in for `BrowserSession`: hands out `page` (none: navigate first), counts resets. */
-export class FakeSession implements Pick<BrowserSession, 'ensurePage' | 'requirePage' | 'load' | 'close'> {
+class FakeSession implements Pick<BrowserSession, 'ensurePage' | 'requirePage' | 'load' | 'close'> {
   page: FakePage | undefined;
   resets = 0;
 

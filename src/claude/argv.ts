@@ -90,7 +90,7 @@ function toolLists(spec: SpawnSpec): { allowed: string[]; disallowed: string[] }
 }
 
 /** system.md + project.md + runtime + skills + memory + tool inventory (+ subagent docs). */
-export function composeSystemPrompt(spec: SpawnSpec): string {
+function composeSystemPrompt(spec: SpawnSpec): string {
   let prompt = readFileSync(spec.systemPromptPath, 'utf8');
   if (existsSync(spec.projectPromptPath)) prompt += `\n\n${readFileSync(spec.projectPromptPath, 'utf8')}`;
   prompt += `\n\n${runtimeBlock(spec)}`;
@@ -114,7 +114,7 @@ function runtimeBlock(spec: SpawnSpec): string {
 }
 
 /** "# Your tools": every reachable tool by its EXACT callable name, per namespace. */
-export function renderToolsIndex(spec: SpawnSpec): string {
+function renderToolsIndex(spec: SpawnSpec): string {
   if (!spec.tarsToolNames.length) return '';
   const tars = [...spec.tarsToolNames].sort().map((n) => `- \`mcp__tars__${n}\``).join('\n');
   const builtins = builtinTools(spec).map((n) => `- \`${n}\``).join('\n');

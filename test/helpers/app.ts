@@ -2,13 +2,13 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createApp } from '../../src/app.ts';
+import { App } from '../../src/app.ts';
 import { loadConfig } from '../../src/config.ts';
 import { FakeTelegram } from '../fakes/telegram.ts';
 import { memoryLogger } from './log.ts';
 import { tempDir } from './tmp.ts';
 
-export const FAKE_CLAUDE = fileURLToPath(new URL('../fakes/fake-claude.ts', import.meta.url));
+const FAKE_CLAUDE = fileURLToPath(new URL('../fakes/fake-claude.ts', import.meta.url));
 export const OWNER = { id: 111, first_name: 'Owner', username: 'owner' };
 
 /** A whole tars app on fakes: fake Telegram, fake claude, temp data dir, and a file "server" for attachments. */
@@ -41,7 +41,7 @@ export function testApp(env: Record<string, string> = {}, access: object = { pol
   /** Telegram-hosted files by `file_id`, served to the attachment downloader (a promise holds the download back). */
   const files = new Map<string, string | Promise<string>>();
   const download = async (url: string, dest: string) => writeFileSync(dest, (await files.get(url.slice(url.lastIndexOf('/') + 1))) ?? '');
-  const app = createApp(config, {
+  const app = new App(config, {
     log, env: {}, telegram: telegram.transformer, botInfo: telegram.botInfo, download,
     onFatal: (r) => void fatal.push(r), onKill: () => void kills.push(Date.now()), addLogSink: (sink) => log.addSink(sink),
   });

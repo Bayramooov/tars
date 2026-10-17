@@ -72,6 +72,12 @@ describe('turn events', () => {
     expect(turn().turn.finish({ type: 'result', is_error: false }).apiError).toBeUndefined();
   });
 
+  it('tells Claude Code ending the turn itself apart from an API rejection', () => {
+    const ended = turn().turn.finish({ type: 'result', subtype: 'error_max_structured_output_retries', is_error: true, errors: ['schema mismatch'] });
+    expect(ended.cliError).toBe('error_max_structured_output_retries: schema mismatch');
+    expect(ended.apiError).toBeUndefined();
+  });
+
   it('reports each tool result and its error flag', () => {
     const t = turn();
     const flags = t.turn.toolResults({ message: { content: [{ type: 'tool_result', tool_use_id: 'toolu_1', content: [{ type: 'text', text: 'a' }, { type: 'text', text: 'b' }] }, { type: 'tool_result', tool_use_id: 'toolu_2', content: 'boom', is_error: true }] } });

@@ -5,8 +5,7 @@
  */
 export class ToolErrorBreaker {
   private count = 0;
-  private firstAt: number | undefined;
-  private timer: NodeJS.Timeout | undefined;
+  private firstAt = 0;
   private readonly max: number;
   private readonly windowMs: number;
 
@@ -17,29 +16,22 @@ export class ToolErrorBreaker {
 
   /** Record one failed tool call; true when it trips the breaker. */
   recordError(): boolean {
-    this.count++;
-    if (this.firstAt === undefined) {
-      this.firstAt = performance.now();
-      this.timer = setTimeout(() => this.reset(), this.windowMs);
+    const now = performance.now();
+    if (this.count === 0 || now - this.firstAt > this.windowMs) {
+      this.count = 0;
+      this.firstAt = now;
     }
+    this.count++;
     return this.count >= this.max;
   }
 
   /** A successful call (or a new turn) erases the burst. */
   reset(): void {
-    this.cancelWindow();
     this.count = 0;
-    this.firstAt = undefined;
-  }
-
-  /** A finished turn only stops the window timer. */
-  cancelWindow(): void {
-    clearTimeout(this.timer);
-    this.timer = undefined;
   }
 
   describe(): string {
-    const elapsed = this.firstAt === undefined ? 0 : (performance.now() - this.firstAt) / 1000;
+    const elapsed = (performance.now() - this.firstAt) / 1000;
     return `${this.count} errors in ${elapsed.toFixed(1)}s (max=${this.max}, window=${(this.windowMs / 1000).toFixed(0)}s)`;
   }
 }

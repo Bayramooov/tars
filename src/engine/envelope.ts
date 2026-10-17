@@ -23,7 +23,7 @@ export function formatBatch(messages: readonly ChatMessage[], history?: History)
 }
 
 /** One `<msg>`; a synthetic reminder (id 0) already is a complete `<reminder>` and passes through. */
-export function formatMessage(m: ChatMessage, parentsXml = ''): string {
+function formatMessage(m: ChatMessage, parentsXml: string): string {
   if (m.messageId === 0) return m.text;
   const name = m.firstName || m.username || String(m.userId);
   const time = m.timestamp.toISOString().slice(11, 16);

@@ -5,7 +5,7 @@ import { safeClose } from './close.ts';
 import type { BrowserManager } from './manager.ts';
 import { checkNavigable, isGlobal } from './ssrf.ts';
 
-export interface SessionOptions {
+interface SessionOptions {
   manager: Pick<BrowserManager, 'newContext'>;
   log: Logger;
   /** Throws for a URL Chromium may not reach; tests swap in their own. */

@@ -1,8 +1,8 @@
 import { parse, stringify } from 'yaml';
 
 /** Agent Skills caps, shared by skills and memory files. */
-export const NAME_MAX = 64;
-export const DESCRIPTION_MAX = 1024;
+const NAME_MAX = 64;
+const DESCRIPTION_MAX = 1024;
 
 const BLOCK = /^---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/;
 

@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { createApp } from './app.ts';
+import { App } from './app.ts';
 import { loadConfig, PROJECT_ROOT } from './config.ts';
 import { setupLogging } from './log/setup.ts';
 
@@ -24,7 +24,7 @@ async function shutdown(code: number): Promise<void> {
   process.exit(code);
 }
 
-const app = createApp(config, {
+const app = new App(config, {
   log,
   env: process.env,
   onFatal: () => void shutdown(1),

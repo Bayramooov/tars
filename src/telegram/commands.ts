@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 
-import type { Context } from 'grammy';
+import type { Api, Context } from 'grammy';
 import type { ParseMode } from 'grammy/types';
 
 import type { Config } from '../config.ts';
@@ -27,11 +27,26 @@ export interface CommandDeps {
   kill(): void;
 }
 
-type Command = (ctx: Context, args: string[]) => Promise<void>;
+type Command = (ctx: Context, args: string[], deps: CommandDeps) => Promise<void>;
 
 const RESET_REPLY =
   'Session cleared — Claude restarted with a fresh context. Chat history and memories are preserved; ' +
   'a short recap of recent messages will be carried into the next turn.';
+
+/** The owner commands, in `/` menu order. */
+const COMMANDS: { command: string; description: string; run: Command }[] = [
+  { command: 'health', description: 'quick health readout', run: (ctx, _args, d) => reply(ctx, healthText(d.db, d.engine, d.pause.paused), 'Markdown') },
+  { command: 'audit', description: 'recent failures, backups, memory footprint', run: (ctx, _args, d) => reply(ctx, auditText(d.db, d.config), 'Markdown') },
+  { command: 'logs', description: 'tail recent log lines: /logs [N]', run: (ctx, args, d) => logs(ctx, join(d.config.logDir, 'tars.log'), args) },
+  { command: 'access', description: 'show access policy', run: (ctx, _args, d) => reply(ctx, accessText(d.config.accessPath, d.config.ownerId, d.log)) },
+  { command: 'allow', description: 'add to allowlist: /allow <user|group> <id>', run: (ctx, args, d) => reply(ctx, allow(d.config.accessPath, args, d.log)) },
+  { command: 'deny', description: 'remove from allowlist: /deny <user|group> <id>', run: (ctx, args, d) => reply(ctx, deny(d.config.accessPath, args, d.log)) },
+  { command: 'policy', description: 'set policy: /policy <owner_only|allowlist|open>', run: (ctx, args, d) => reply(ctx, setPolicy(d.config.accessPath, args, d.log)) },
+  { command: 'pause', description: 'drop inbound messages until /resume', run: (ctx, _args, d) => pause(ctx, d) },
+  { command: 'resume', description: 're-enable message forwarding', run: (ctx, _args, d) => resume(ctx, d) },
+  { command: 'kill', description: 'stop the bot', run: (ctx, _args, d) => kill(ctx, d) },
+  { command: 'reset_session', description: 'fresh Claude session (history kept)', run: (ctx, _args, d) => resetSession(ctx, d) },
+];
 
 /**
  * The owner commands. Any of these 11 is consumed whoever sends it, wherever
@@ -39,26 +54,24 @@ const RESET_REPLY =
  * an answer; any other `/word` is left to the message pipeline.
  */
 export function createCommands(deps: CommandDeps): CommandHandler {
-  const { config, db, engine, log } = deps;
-  const commands = new Map<string, Command>([
-    ['kill', (ctx) => kill(ctx, deps)],
-    ['reset_session', (ctx) => resetSession(ctx, deps)],
-    ['pause', (ctx) => pause(ctx, deps)],
-    ['resume', (ctx) => resume(ctx, deps)],
-    ['health', (ctx) => reply(ctx, healthText(db, engine, deps.pause.paused), 'Markdown')],
-    ['audit', (ctx) => reply(ctx, auditText(db, config), 'Markdown')],
-    ['logs', (ctx, args) => logs(ctx, join(config.logDir, 'tars.log'), args)],
-    ['allow', (ctx, args) => reply(ctx, allow(config.accessPath, args, log))],
-    ['deny', (ctx, args) => reply(ctx, deny(config.accessPath, args, log))],
-    ['policy', (ctx, args) => reply(ctx, setPolicy(config.accessPath, args, log))],
-    ['access', (ctx) => reply(ctx, accessText(config.accessPath, config.ownerId, log))],
-  ]);
   return async (ctx, { name, args }) => {
-    const command = commands.get(name);
+    const command = COMMANDS.find((c) => c.command === name);
     if (!command) return false;
-    if (ctx.from?.id === config.ownerId) await command(ctx, args);
+    if (ctx.from?.id === deps.config.ownerId) await command.run(ctx, args, deps);
     return true;
   };
+}
+
+/**
+ * Show the owner commands in the owner's own chat only (nobody else gets a
+ * menu). Run at startup before polling; a failure is logged and startup goes on.
+ */
+export async function registerCommandMenu(api: Api, ownerId: number, log: Logger): Promise<void> {
+  try {
+    await api.setMyCommands(COMMANDS.map(({ command, description }) => ({ command, description })), { scope: { type: 'chat', chat_id: ownerId } });
+  } catch (err) {
+    log.error('failed to register owner-scoped bot commands', { err });
+  }
 }
 
 async function kill(ctx: Context, deps: CommandDeps): Promise<void> {

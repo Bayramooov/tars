@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { Bot, Transformer } from 'grammy';
@@ -34,8 +34,7 @@ import { RenderStore } from './stores/renders.ts';
 import { renderSkillsIndex, SkillsStore } from './stores/skills.ts';
 import { attachmentIngest, downloadFile } from './telegram/attachments.ts';
 import { createBot } from './telegram/bot.ts';
-import { createCommands } from './telegram/commands.ts';
-import { registerCommandMenu } from './telegram/commands/menu.ts';
+import { createCommands, registerCommandMenu } from './telegram/commands.ts';
 import { type CommandHandler, Dispatcher } from './telegram/dispatcher.ts';
 import { buildTools } from './tools/index.ts';
 
@@ -133,7 +132,6 @@ export class App {
    * the fresh one, and tell the owner.
    */
   private async onStaleSession(): Promise<void> {
-    rmSync(this.config.sessionIdPath, { force: true });
     this.running.engine?.stashRestoreContext('stale-session');
     const text =
       'ℹ️ Previous Claude Code session expired — starting a fresh one. Your last message may need to be resent. ' +
@@ -155,12 +153,11 @@ export class App {
     this.o.addLogSink(this.ownerAlerts.sink);
   }
 
-  /** Tear down in reverse order of `start()`; the session id is saved first so the next start resumes it. */
+  /** Tear down in reverse order of `start()`; a failing step is logged and the rest still run. */
   async stop(): Promise<void> {
     const { bot, engine, worker, mcp, browserSession, browser, db, reminders } = this.running;
     const steps = [
       () => this.ownerAlerts?.flush(),
-      () => worker?.sessionId && writeFileSync(this.config.sessionIdPath, worker.sessionId),
       () => reminders?.stop(),
       () => bot?.isRunning() && bot.stop(),
       () => engine?.stop(),
@@ -171,7 +168,13 @@ export class App {
       () => db?.close(),
       () => this.releaseLock?.(),
     ];
-    for (const step of steps) await step();
+    for (const step of steps) {
+      try {
+        await step();
+      } catch (err) {
+        this.log.error('shutdown step failed', { err });
+      }
+    }
     this.log.info('clean shutdown complete');
   }
 
@@ -283,7 +286,7 @@ export class App {
       let live = false;
       const polling = bot.start({
         drop_pending_updates: true,
-        allowed_updates: ['message', 'edited_message', 'callback_query', 'message_reaction'],
+        allowed_updates: ['message', 'edited_message', 'message_reaction'],
         timeout: 10,
         onStart: () => {
           live = true;
@@ -299,8 +302,6 @@ export class App {
     });
   }
 }
-
-export const createApp = (config: Config, options: AppOptions) => new App(config, options);
 
 /** Await a best-effort Telegram call; a failure is logged as a warning, never thrown. */
 async function quietly(call: Promise<unknown>, log: Logger, what: string): Promise<void> {

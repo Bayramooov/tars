@@ -140,21 +140,26 @@ export class Engine {
   private async kick(): Promise<void> {
     if (!this.pending.length || this.processing || this.handling || this.stopped) return;
     const batch = this.takePending();
-    this.processing = true;
     this.turn = newTurn(batch);
     const restore = this.restore;
     this.restore = undefined;
     this.turn.hadRestoredContext = restore !== undefined;
-    this.opening = this.open(batch, restore);
+    const xml = formatBatch(batch, this.history);
+    this.log.info(`starting turn with ${batch.length} msgs`);
+    await this.sendTurn(restore === undefined ? xml : `${restore}\n${xml}`, batch);
+  }
+
+  /** Open or continue the turn with one message; injections wait until it has gone out. */
+  private async sendTurn(text: string, batch: readonly ChatMessage[]): Promise<void> {
+    this.processing = true;
+    this.opening = this.open(text, batch);
     await this.opening;
   }
 
-  private async open(batch: ChatMessage[], restore: string | undefined): Promise<void> {
-    const xml = formatBatch(batch, this.history);
-    this.log.info(`starting turn with ${batch.length} msgs`);
+  private async open(text: string, batch: readonly ChatMessage[]): Promise<void> {
     await this.o.typing.start(this.turn.activeChats);
     this.logHotPath('worker-send', batch, this.turn.activeChats);
-    await this.o.worker.send(restore === undefined ? xml : `${restore}\n${xml}`);
+    await this.o.worker.send(text);
     this.markConsumed(batch);
   }
 
@@ -290,18 +295,13 @@ export class Engine {
     this.turn.heartbeats++;
     const batch = this.takePending();
     this.turn.awaitingReply ||= humans(batch).length > 0;
-    this.processing = true;
-    await this.o.typing.start(this.turn.activeChats);
-    await this.o.worker.send(batch.length ? formatBatch(batch, this.history) : HEARTBEAT_NUDGE);
-    if (batch.length) this.markConsumed(batch);
+    await this.sendTurn(batch.length ? formatBatch(batch, this.history) : HEARTBEAT_NUDGE, batch);
   }
 
   private async retrySilentStop(): Promise<void> {
     this.turn.silentStopRetried = true;
     this.log.warn('silent stop with a DM waiting — re-engaging CC to reply or confirm skip');
-    this.processing = true;
-    await this.o.typing.start(this.turn.activeChats);
-    await this.o.worker.send(SILENT_STOP_NUDGE);
+    await this.sendTurn(SILENT_STOP_NUDGE, []);
   }
 
   /** A clean ending: the only place a turn's messages become trusted (`processed=1`). */

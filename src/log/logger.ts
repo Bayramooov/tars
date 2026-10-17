@@ -8,21 +8,16 @@ export interface LogRecord {
   /** Dotted logger name, e.g. `tars.engine`. */
   name: string;
   msg: string;
-  event?: string | undefined;
-  data?: unknown;
   err?: unknown;
 }
 
 export type LogSink = (record: LogRecord) => void;
 
 export interface LogExtra {
-  event?: string;
-  data?: unknown;
   err?: unknown;
 }
 
 export interface Logger {
-  readonly name: string;
   debug(msg: string, extra?: LogExtra): void;
   info(msg: string, extra?: LogExtra): void;
   warn(msg: string, extra?: LogExtra): void;
@@ -49,7 +44,6 @@ export function createLogger(sinks: readonly LogSink[], minLevel: Level = 'INFO'
     }
   };
   return {
-    name,
     debug: (msg, extra) => emit('DEBUG', msg, extra),
     info: (msg, extra) => emit('INFO', msg, extra),
     warn: (msg, extra) => emit('WARNING', msg, extra),

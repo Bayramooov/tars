@@ -89,8 +89,7 @@ describe('ClaudeWorker', () => {
     await h.worker.start();
     await h.worker.send(control('stop'));
     await h.nextResult();
-    expect(h.worker.sessionId).toMatch(/^[0-9a-f-]{36}$/);
-    expect(readFileSync(join(h.dir, 'session_id'), 'utf8')).toBe(h.worker.sessionId);
+    expect(readFileSync(join(h.dir, 'session_id'), 'utf8')).toMatch(/^[0-9a-f-]{36}$/);
   });
 
   it('reports a crash mid-turn and respawns resuming the same session', async () => {
@@ -98,7 +97,7 @@ describe('ClaudeWorker', () => {
     await h.worker.start();
     await h.worker.send(control('stop'));
     await h.nextResult();
-    const session = h.worker.sessionId as string;
+    const session = readFileSync(join(h.dir, 'session_id'), 'utf8');
     await h.worker.send(`#fake text half an answer\n#fake crash`);
     expect(await h.nextResult()).toMatchObject({ abortedReason: 'crash', textBlocks: ['half an answer'] });
     await until(() => h.spawns()[1]);
@@ -158,6 +157,27 @@ describe('ClaudeWorker', () => {
     await h.worker.send(control('stop', 'after reset'));
     expect((await h.nextResult(3)).control?.reason).toBe('after reset');
     expect(h.spawns()[1]?.argv).not.toContain('--resume');
+  });
+
+  it('holds a send issued while the reset kills the child for the fresh one', async () => {
+    const h = harness();
+    await h.worker.start();
+    await h.worker.send('#fake hang');
+    const reset = h.worker.resetSession();
+    await h.worker.send(control('stop', 'after reset'));
+    await reset;
+    expect((await h.nextResult(2)).control?.reason).toBe('after reset');
+  });
+
+  it('keeps a send waiting across a respawn that fails to start', async () => {
+    let spawned = 0;
+    const h = harness({ argv: (sid) => (++spawned === 2 ? ['/nonexistent/claude-binary'] : [FAKE, ...(sid ? ['--resume', sid] : [])]) });
+    await h.worker.start();
+    await h.worker.send('#fake crash');
+    await h.nextResult();
+    await h.worker.send(control('stop', 'survived'));
+    expect((await h.nextResult(2)).control?.reason).toBe('survived');
+    expect(spawned).toBe(3);
   });
 
   it('folds an injected message into the running turn', async () => {

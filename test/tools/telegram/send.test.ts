@@ -50,6 +50,13 @@ describe('telegram_send_message / telegram_reply_to_message', () => {
     expect(t.log.text()).toContain('[TX] DM Ali[111] m5001 →m42 | ');
   });
 
+  it('keeps every chunk of a long reply in the forum topic of the message it answers', async () => {
+    const t = setup();
+    t.fake.respond('sendMessage', { message_id: 5001, date: 0, chat: { id: -100, type: 'supergroup', title: 'g' }, is_topic_message: true, message_thread_id: 7 });
+    await t.reply.run({ chat_id: -100, reply_to_message_id: 42, text: `${'a'.repeat(4000)}\n\n${'b'.repeat(100)}` });
+    expect(t.fake.sent().map((c) => c.payload.message_thread_id)).toEqual([undefined, 7]);
+  });
+
   it('surfaces Telegram failures and keeps delivered chunks', async () => {
     const t = setup();
     t.fake.fail('sendMessage', 400, 'Bad Request: message text is empty');

@@ -59,6 +59,13 @@ describe('scrub (golden)', () => {
     expect(scrub(c.in)).toBe(c.out);
     expect(containsSecret(c.in)).toBe(c.contains);
   });
+
+  it('stays linear on key headers that never close (an attachment could freeze the bot)', () => {
+    const text = '-----BEGIN PRIVATE KEY-----\n'.repeat(40_000);
+    const started = performance.now();
+    expect(scrub(text)).toBe(text);
+    expect(performance.now() - started).toBeLessThan(500);
+  });
 });
 
 describe('telegram links (golden)', () => {

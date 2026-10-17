@@ -3,12 +3,12 @@ import type { Update, UserFromGetMe } from 'grammy/types';
 
 import { until } from '../helpers/wait.ts';
 
-export interface ApiCall {
+interface ApiCall {
   method: string;
   payload: Record<string, unknown>;
 }
 
-export interface Person {
+interface Person {
   id: number;
   first_name: string;
   username?: string;

@@ -100,6 +100,7 @@ function capped(text: string, limit: number): ToolResult {
 
 interface Described {
   innerText?: string;
+  textContent?: string | null;
   getAttribute(name: string): string | null;
 }
 
@@ -107,10 +108,7 @@ interface Described {
 function describeElements(elements: Described[]): { count: number; items: [string, string | null, string | null][] } {
   return {
     count: elements.length,
-    items: elements.slice(0, 50).map((el) => {
-      // Like Playwright's innerText(): SVG and other non-HTML elements have no text to give.
-      if (typeof el.innerText !== 'string') throw new Error('Node is not an HTMLElement');
-      return [el.innerText, el.getAttribute('href'), el.getAttribute('src')];
-    }),
+    // SVG and other non-HTML elements have no innerText.
+    items: elements.slice(0, 50).map((el) => [el.innerText ?? el.textContent ?? '', el.getAttribute('href'), el.getAttribute('src')]),
   };
 }

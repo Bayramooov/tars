@@ -3,12 +3,10 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 /** Spawning processes is the Claude Code worker's job alone. */
-const NO_CHILD_PROCESS = {
-  paths: ['child_process', 'node:child_process', 'execa', 'cross-spawn'].map((name) => ({
-    name,
-    message: 'Only src/claude/child.ts may spawn processes.',
-  })),
-};
+const NO_CHILD_PROCESS = ['child_process', 'node:child_process', 'execa', 'cross-spawn'].map((name) => ({
+  name,
+  message: 'Only src/claude/child.ts may spawn processes.',
+}));
 
 /** Tools reach the filesystem only through the path-hardened stores. */
 const NO_FS = ['fs', 'node:fs', 'fs/promises', 'node:fs/promises'].map((name) => ({
@@ -36,7 +34,7 @@ export default tseslint.config(
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'no-restricted-imports': ['error', { paths: [...NO_CHILD_PROCESS.paths, ...NO_PLAYWRIGHT] }],
+      'no-restricted-imports': ['error', { paths: [...NO_CHILD_PROCESS, ...NO_PLAYWRIGHT] }],
     },
   },
   {
@@ -45,11 +43,11 @@ export default tseslint.config(
   },
   {
     files: ['src/browser/**'],
-    rules: { 'no-restricted-imports': ['error', { paths: NO_CHILD_PROCESS.paths }] },
+    rules: { 'no-restricted-imports': ['error', { paths: NO_CHILD_PROCESS }] },
   },
   {
     files: ['src/tools/**'],
-    rules: { 'no-restricted-imports': ['error', { paths: [...NO_CHILD_PROCESS.paths, ...NO_PLAYWRIGHT, ...NO_FS] }] },
+    rules: { 'no-restricted-imports': ['error', { paths: [...NO_CHILD_PROCESS, ...NO_PLAYWRIGHT, ...NO_FS] }] },
   },
   {
     // Tests and fakes: drive real processes and longer scenarios; the size rails are for app code.

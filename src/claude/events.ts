@@ -1,6 +1,5 @@
 import type { Logger } from '../log/logger.ts';
-import { asText } from '../text/json.ts';
-import { isRecord } from './turn.ts';
+import { asText, isRecord } from '../text/json.ts';
 
 /** One stream-json user message line for Claude Code's stdin. */
 export const userLine = (text: string) => `${JSON.stringify({ type: 'user', message: { role: 'user', content: [{ type: 'text', text }] } })}\n`;

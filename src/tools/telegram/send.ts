@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-import { recordOutbound } from '../../telegram/outbound.ts';
 import { chunkText } from '../../text/chunk.ts';
 import { markdownToTelegramHtml } from '../../text/markdown.ts';
 import { defineTool, type Tool, type ToolResult } from '../../mcp/tool.ts';
 import type { ToolContext } from '../context.ts';
+import { recordOutbound } from './delivery.ts';
 
 type SendContext = Pick<ToolContext, 'api' | 'db' | 'me' | 'chatTitles' | 'transcript' | 'log' | 'onChatReplied'>;
 
@@ -47,19 +47,22 @@ interface Outgoing {
 
 /**
  * Send markdown text as Telegram HTML, split at paragraph boundaries into
- * as many messages as needed; only the first threads to `replyTo`. Every
- * delivered chunk is recorded — also when a later chunk fails.
+ * as many messages as needed; only the first threads to `replyTo`, and the
+ * rest follow it into its forum topic. Every delivered chunk is recorded —
+ * also when a later chunk fails.
  */
 async function deliver(ctx: SendContext, out: Outgoing): Promise<ToolResult> {
   const chunks = chunkText(out.text);
   const ids: number[] = [];
+  let topic = out.topic ?? undefined;
   try {
     for (const [i, chunk] of chunks.entries()) {
       const sent = await ctx.api.sendMessage(out.chatId, markdownToTelegramHtml(chunk), {
         parse_mode: 'HTML',
         ...(i === 0 && out.replyTo !== null ? { reply_parameters: { message_id: out.replyTo } } : {}),
-        ...(out.topic !== null ? { message_thread_id: out.topic } : {}),
+        message_thread_id: topic,
       });
+      topic ??= sent.is_topic_message ? sent.message_thread_id : undefined;
       ids.push(sent.message_id);
       ctx.log.info(`hot-path stage=delivered chat=${out.chatId} msg=${sent.message_id} chunk=${i + 1}/${chunks.length}`);
       if (i === 0) ctx.onChatReplied(out.chatId);

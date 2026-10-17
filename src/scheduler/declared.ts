@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 
+import { isRecord } from '../text/json.ts';
 import { isValidCron } from './cron.ts';
 
 /** Seed-key namespace of `default-reminders.json` rows; the self-reflection key never matches it. */
@@ -33,7 +34,7 @@ export function loadDeclaredReminders(path: string, ownerId: number): DeclaredRe
   } catch (err) {
     throw Object.assign(configError(`${path} is not valid JSON: ${(err as Error).message}`), { cause: err });
   }
-  if (!isObject(data)) throw configError(`${path}: top level must be a JSON object`);
+  if (!isRecord(data)) throw configError(`${path}: top level must be a JSON object`);
   const entries = 'reminders' in data ? data.reminders : [];
   if (!Array.isArray(entries)) throw configError(`${path}: 'reminders' must be a list`);
   const reminders = entries.map((raw: unknown, i) => parseEntry(raw, `reminders[${i}]`, ownerId));
@@ -46,7 +47,7 @@ export function loadDeclaredReminders(path: string, ownerId: number): DeclaredRe
 }
 
 function parseEntry(raw: unknown, where: string, ownerId: number): DeclaredReminder {
-  if (!isObject(raw)) throw configError(`${where} must be an object`);
+  if (!isRecord(raw)) throw configError(`${where} must be an object`);
   const name = requireText(raw, 'name', where);
   const cron = requireText(raw, 'cron', where);
   const text = reminderText(raw.text, where);
@@ -74,5 +75,3 @@ function reminderText(value: unknown, where: string): string {
   if (!text.trim()) throw configError(`${where}: 'text' must be non-empty`);
   return text;
 }
-
-const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);

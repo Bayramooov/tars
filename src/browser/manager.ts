@@ -3,7 +3,7 @@ import { type Browser, type BrowserContext, chromium } from 'playwright';
 import type { Logger } from '../log/logger.ts';
 import { safeClose } from './close.ts';
 
-export interface Viewport {
+interface Viewport {
   width: number;
   height: number;
 }

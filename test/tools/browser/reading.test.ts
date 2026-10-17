@@ -80,10 +80,9 @@ describe('browser reading tools', () => {
     expect(data).toEqual({ count: 53 });
   });
 
-  // Playwright's innerText() refuses SVG and other non-HTML elements
-  it('browser_list fails on a non-HTML element', async () => {
+  it('browser_list lists a non-HTML element (no innerText) too', async () => {
     const page = Object.assign(new FakePage(), { elements: [element(undefined, { href: '#x' })] });
-    await expect(call(listTool(fakeSession(page)), { selector: 'svg a' })).rejects.toThrow('Node is not an HTMLElement');
+    expect(await call(listTool(fakeSession(page)), { selector: 'svg a' })).toEqual({ content: '-   [#x]', data: { count: 1 } });
   });
 
   it('browser_wait_for waits with the given budget (default 10 s, 1..30000)', async () => {
@@ -131,7 +130,7 @@ describe.skipIf(!existsSync(chromium.executablePath()))('browser reading tools i
     expect(await call(getAttributeTool(session), { selector: 'img', name: 'alt' })).toEqual({ content: '', data: { value: '' } });
     expect((await call(getAttributeTool(session), { selector: 'img', name: 'title' })).content).toBe('"img" has no attribute "title"');
     expect(await call(listTool(session), { selector: 'a[href="/a"], img' })).toEqual({ content: '- First link  [/a]\n-   [/i.png]', data: { count: 2 } });
-    await expect(call(listTool(session), { selector: 'svg a' })).rejects.toThrow('Node is not an HTMLElement');
+    expect(await call(listTool(session), { selector: 'svg a' })).toEqual({ content: '- svg  [#s]', data: { count: 1 } });
     expect((await call(waitForTool(session), { selector: '.ready' })).content).toBe('element ".ready" is present');
     expect((await call(getTextTool(session), { selector: '.missing' })).content).toBe(
       'get_text: no element matching ".missing" appeared in time (it may not be on this page — try a different selector)',

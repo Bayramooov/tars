@@ -73,7 +73,7 @@ The reason is a forcing function — without it models end turns reflexively —
 
 What `outcome.ts` does with an ending:
 
-- **Dropped text.** Text blocks but no user-visible tool call: the model believes it replied while the chat sees nothing. On `stop` the engine delivers that text itself, threaded to the message it answers. On `skip` it's narration and is thrown away. When the text is really a Claude Code diagnostic (bad model, auth, quota), `src/claude/failures.ts` turns it into a targeted owner alert instead.
+- **Dropped text.** Text blocks but no user-visible tool call: the model believes it replied while the chat sees nothing. Unless the action is `skip`, the engine delivers that text itself, threaded to the message it answers. On `skip` it's narration and is thrown away. When the text is really a Claude Code diagnostic (bad model, auth, quota), `src/claude/failures.ts` turns it into a targeted owner alert instead.
 - **Silent stop.** A `stop` that delivered nothing while someone waits gets one nudge to reply or switch to `skip`.
 - **Aborts, crashes and API rejections** — next section.
 

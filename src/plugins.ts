@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 
 import type { Logger } from './log/logger.ts';
+import { isRecord } from './text/json.ts';
 
 export type McpTransport = 'stdio' | 'http' | 'sse';
 
@@ -47,7 +48,7 @@ export function loadPlugins(path: string, env: Readonly<Record<string, string | 
     return { toolGroups: {}, mcps: [], skillsDisabled: new Set(), builtinToolsDisabled: new Set() };
   }
   const data = parseJsonFile(path);
-  if (!isObject(data)) throw new Error(`${path}: top level must be a JSON object`);
+  if (!isRecord(data)) throw new Error(`${path}: top level must be a JSON object`);
   const unknown = Object.keys(data).filter((k) => !TOP_LEVEL_KEYS.includes(k));
   if (unknown.length) throw new Error(`${path}: unknown top-level key(s): ${list(unknown)}; allowed: ${list(TOP_LEVEL_KEYS)}`);
   const toolGroups = validateToolGroups(data.tool_groups, path);
@@ -96,7 +97,7 @@ function parseJsonFile(path: string): unknown {
 
 function validateToolGroups(raw: unknown, path: string): Plugins['toolGroups'] {
   if (raw === undefined || raw === null) return {};
-  if (!isObject(raw)) throw new Error(`${path}: tool_groups must be an object`);
+  if (!isRecord(raw)) throw new Error(`${path}: tool_groups must be an object`);
   const unknown = Object.keys(raw).filter((k) => !TOOL_GROUP_KEYS.includes(k));
   if (unknown.length) throw new Error(`${path}: tool_groups has unknown key(s): ${list(unknown)}; allowed: ${list(TOOL_GROUP_KEYS)}`);
   for (const [key, value] of Object.entries(raw)) {
@@ -110,7 +111,7 @@ function validateMcps(raw: unknown, path: string): Entry[] {
   if (!Array.isArray(raw)) throw new Error(`${path}: mcps must be an array`);
   const seen = new Set<string>();
   return raw.map((entry: unknown, i) => {
-    if (!isObject(entry)) throw new Error(`${path}: mcps[${i}] must be an object`);
+    if (!isRecord(entry)) throw new Error(`${path}: mcps[${i}] must be an object`);
     checkKeys(entry, i, path);
     const name = checkName(entry, i, seen, path);
     const transport = checkTransport(entry, name, path);
@@ -229,7 +230,7 @@ function substituteArgs(raw: unknown, env: Readonly<Record<string, string | unde
 
 function substituteMap(raw: unknown, env: Readonly<Record<string, string | undefined>>, name: string, field: string): Record<string, string> | string {
   if (!raw) return {};
-  if (!isObject(raw) || Object.values(raw).some((v) => typeof v !== 'string')) {
+  if (!isRecord(raw) || Object.values(raw).some((v) => typeof v !== 'string')) {
     throw new Error(`mcps[${JSON.stringify(name)}].${field} entries must be string→string`);
   }
   const out: Record<string, string> = {};
@@ -252,5 +253,4 @@ function substitute(template: string, env: Readonly<Record<string, string | unde
   return missing ? undefined : out;
 }
 
-const isObject = (value: unknown): value is Entry => typeof value === 'object' && value !== null && !Array.isArray(value);
 const list = (items: readonly string[]) => JSON.stringify([...items].sort());

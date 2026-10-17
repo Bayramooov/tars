@@ -12,7 +12,7 @@ export interface Access {
   allowedChats: number[];
 }
 
-const POLICIES: readonly string[] = ['owner_only', 'allowlist', 'open'];
+export const POLICIES: readonly string[] = ['owner_only', 'allowlist', 'open'];
 const DEFAULTS = (): Access => ({ policy: 'owner_only', allowedUsers: [], allowedChats: [] });
 
 /**

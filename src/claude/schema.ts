@@ -1,5 +1,5 @@
 /** Hard cap on the control action's `reason` (~25 tokens worst case). */
-export const REASON_MAX_LENGTH = 100;
+const REASON_MAX_LENGTH = 100;
 
 /**
  * JSON Schema Claude Code enforces on the turn-end `StructuredOutput`. It must

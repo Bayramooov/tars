@@ -11,12 +11,10 @@ export function formatConsole(record: LogRecord): string {
 
 /**
  * One JSON object per line, the schema `/logs` reads: `ts` (UTC ISO),
- * `level`, `logger`, `msg`, and `event` / `data` / `exc` when present.
+ * `level`, `logger`, `msg`, and `exc` when present.
  */
 export function formatJson(record: LogRecord): string {
   const payload: Record<string, unknown> = { ts: record.time.toISOString(), level: record.level, logger: record.name, msg: record.msg };
-  if (record.event !== undefined) payload.event = record.event;
-  if (record.data !== undefined) payload.data = record.data;
   if (record.err !== undefined) payload.exc = errorText(record.err);
   return JSON.stringify(payload);
 }

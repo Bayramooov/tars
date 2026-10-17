@@ -258,6 +258,24 @@ describe('engine: turn endings', () => {
     expect(t.worker.sent).toHaveLength(11);
   });
 
+  it('injects a message that arrives while a heartbeat continuation is still going out', async () => {
+    const t = setup();
+    await startTurn(t, msg('long task'));
+    let release = () => {};
+    t.worker.send = (text) => {
+      t.worker.sent.push(text);
+      t.worker.injectAccepts = false; // like the real worker: no turn to join until the send is written
+      return new Promise((resolve) => (release = () => resolve(void (t.worker.injectAccepts = true))));
+    };
+    t.engine.onResult(result({ control: { action: 'heartbeat' } }));
+    await t.sends(2);
+    const late = t.engine.submit(msg('late'));
+    await new Promise((r) => setTimeout(r, 10));
+    release();
+    await late;
+    expect(t.engine.pendingCount).toBe(0);
+  });
+
   it('re-engages a silent stop once, then accepts it', async () => {
     const t = setup();
     await startTurn(t, msg('hi'));
@@ -304,6 +322,15 @@ describe('engine: turn endings', () => {
     t.engine.onResult(result({ apiError: 'Rate limit exceeded', control: undefined }));
     await until(() => t.log.text().includes("I've been rate-limited by the API"));
     expect(t.worker.resets).toBe(0);
+  });
+
+  it('keeps the session when Claude Code itself ended the turn with an error', async () => {
+    const t = setup();
+    await startTurn(t, msg('x'));
+    t.engine.onResult(result({ cliError: 'error_during_execution: boom', control: undefined }));
+    await until(() => t.log.text().includes('(error_during_execution: boom)'));
+    expect(t.worker.resets).toBe(0);
+    expect(t.notices).toEqual([]);
   });
 
   it('resets a poisoned session with a recap, but not when the recap opened the failed turn', async () => {

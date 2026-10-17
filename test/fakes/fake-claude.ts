@@ -4,12 +4,8 @@
 // named in --mcp-config as a real MCP client, and plays the scenario that
 // `#fake <command> <args>` lines inside each user message ask for:
 //
-//   reply <text>        telegram_reply_to_message to the envelope's <msg>
-//   send <text>         telegram_send_message to the envelope's chat
 //   tool <name> <json>  call any tars tool
 //   text <text>         an assistant text block (never delivered by itself)
-//   skip | silent       end with action skip / a stop that delivered nothing
-//   heartbeat <text>    send <text>, end with action heartbeat
 //   control <json>      end with this raw StructuredOutput input
 //   tool-errors <n>     n failing tool calls
 //   api-error <text>    end with an is_error result
@@ -23,8 +19,7 @@
 // FAKE_CLAUDE_LOG (JSONL record of argv, stdin and tool calls; FAKE_CLAUDE_PROBE is
 // recorded with the argv to prove the environment is inherited),
 // FAKE_CLAUDE_STALE (reject any --resume id), FAKE_CLAUDE_MCP_FAIL
-// (report the tars server as failed), FAKE_CLAUDE_ON_NUDGE (action for the
-// silent-stop nudge, default skip).
+// (report the tars server as failed). The silent-stop nudge is answered with skip.
 import { randomUUID } from 'node:crypto';
 import { appendFileSync, readFileSync } from 'node:fs';
 import { createInterface } from 'node:readline';
@@ -115,7 +110,7 @@ async function play(message: string, state: TurnState): Promise<boolean> {
     return m ? [[m[1] ?? '', m[2] ?? ''] as const] : [];
   });
   if (message.includes('You returned action "stop" but sent nothing')) {
-    state.action = { action: process.env.FAKE_CLAUDE_ON_NUDGE ?? 'skip', reason: 'nudged' };
+    state.action = { action: 'skip', reason: 'nudged' };
     return true;
   }
   if (message.includes('Continue the task you just reported on')) {
@@ -124,7 +119,7 @@ async function play(message: string, state: TurnState): Promise<boolean> {
     return true;
   }
   if (!directives.length) return defaultReply(env, state);
-  for (const [cmd, arg] of directives) if (!(await directive(cmd, arg, env, state))) return false;
+  for (const [cmd, arg] of directives) if (!(await directive(cmd, arg, state))) return false;
   return true;
 }
 
@@ -141,17 +136,8 @@ async function defaultReply(env: Envelope, state: TurnState): Promise<boolean> {
   return true;
 }
 
-async function directive(cmd: string, arg: string, env: Envelope, state: TurnState): Promise<boolean> {
-  const chat = env.chatId ?? state.lastChat;
+async function directive(cmd: string, arg: string, state: TurnState): Promise<boolean> {
   switch (cmd) {
-    case 'reply':
-      await callTool('telegram_reply_to_message', { chat_id: chat, reply_to_message_id: env.messageId, text: arg });
-      state.action = { action: 'stop', reason: 'replied' };
-      return true;
-    case 'send':
-      await callTool('telegram_send_message', { chat_id: chat, text: arg });
-      state.action = { action: 'stop', reason: 'sent' };
-      return true;
     case 'tool': {
       const [name = '', ...json] = arg.split(' ');
       await callTool(name, JSON.parse(json.join(' ') || '{}') as Record<string, unknown>);
@@ -161,16 +147,6 @@ async function directive(cmd: string, arg: string, env: Envelope, state: TurnSta
     case 'text':
       emit({ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: arg }] } });
       state.action = { action: 'stop', reason: 'wrote text' };
-      return true;
-    case 'skip':
-      state.action = { action: 'skip', reason: 'not addressed to me' };
-      return true;
-    case 'silent':
-      state.action = { action: 'stop', reason: 'acknowledged' };
-      return true;
-    case 'heartbeat':
-      await callTool('telegram_send_message', { chat_id: chat, text: arg });
-      state.action = { action: 'heartbeat', reason: 'still working' };
       return true;
     case 'control':
       state.action = JSON.parse(arg) as Record<string, unknown>;

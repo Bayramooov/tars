@@ -2,7 +2,7 @@ import { classifyFailure, type FailureClass } from '../claude/failures.ts';
 import type { TurnResult } from '../claude/turn.ts';
 
 /** Consecutive `heartbeat` continuations allowed in one logical turn. */
-export const MAX_HEARTBEATS = 10;
+const MAX_HEARTBEATS = 10;
 
 /** Sent after a heartbeat when nothing new arrived, so the model resumes its own task. */
 export const HEARTBEAT_NUDGE = '<system>Continue the task you just reported on. Return action "stop" only once it is actually done.</system>';
@@ -15,7 +15,7 @@ export const SILENT_STOP_NUDGE =
   'return action "skip" instead.</system>';
 
 /** What the turn controller knows about the logical turn a result belongs to. */
-export interface TurnFacts {
+interface TurnFacts {
   heartbeats: number;
   silentStopRetried: boolean;
   /** The turn consumed at least one human message (reminders don't count). */
@@ -37,11 +37,12 @@ export type NormalOutcome =
   | { kind: 'silent-stop-retry' }
   | { kind: 'finish' };
 
-/** tars's own aborts first (owner reset, crash, breaker/watchdog), then an API rejection. */
+/** tars's own aborts first (owner reset, crash, breaker/watchdog), then Claude Code's error endings, then an API rejection. */
 export function abnormalOutcome(result: TurnResult): AbnormalOutcome | undefined {
   if (result.abortedReason === 'session-reset') return { kind: 'session-reset' };
   if (result.abortedReason === 'crash') return { kind: 'crashed' };
   if (result.abortedReason) return { kind: 'aborted', reason: result.abortedReason };
+  if (result.cliError) return { kind: 'aborted', reason: result.cliError };
   if (!result.apiError) return undefined;
   const failure = classifyFailure([result.apiError, ...result.textBlocks]);
   return failure ? { kind: 'api-classified', failure } : { kind: 'api-reset' };

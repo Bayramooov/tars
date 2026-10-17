@@ -1,3 +1,4 @@
+import { clip } from '../text/clip.ts';
 import type { Logger } from './logger.ts';
 
 /** Bodies longer than this are cut in one-line (`compact`) rendering. */
@@ -96,10 +97,7 @@ export interface MessageLine {
 
 /** One line, cut at 200 characters. */
 function truncate(text: string | undefined): string {
-  if (!text) return '';
-  const flat = text.replace(/\r\n|\n|\r/g, ' ');
-  const chars = [...flat];
-  return chars.length > MAX_BODY ? `${chars.slice(0, MAX_BODY).join('')}…` : flat;
+  return clip((text ?? '').replace(/\r\n|\n|\r/g, ' '), MAX_BODY);
 }
 
 function chatLabel({ chatId, title, chatType }: ChatLabel): string {

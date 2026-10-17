@@ -15,7 +15,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { parseArgs } from 'node:util';
 
 import { cpSlice } from '../text/clip.ts';
-import { asText } from '../text/json.ts';
+import { asText, isRecord } from '../text/json.ts';
 
 type Json = Record<string, unknown>;
 type Renderer = (event: Json, ts: string, max: number) => string[];
@@ -279,7 +279,7 @@ function renderToolResult(block: Json, ts: string, max: number): string {
 
 /** A tool result's content: a string, or text blocks joined by spaces. */
 function toolResultText(content: unknown): string {
-  if (Array.isArray(content)) return content.map((part) => asText(isObject(part) ? (part.text ?? '') : part)).join(' ');
+  if (Array.isArray(content)) return content.map((part) => asText(isRecord(part) ? (part.text ?? '') : part)).join(' ');
   if (content === undefined || content === null) return '';
   return asText(content);
 }
@@ -301,7 +301,7 @@ function renderToolUse(block: Json, ts: string, max: number): string {
 /** The turn's final result — the `{action, reason}` control JSON when it decodes to one — then a blank line. */
 function renderResult(event: Json, ts: string, max: number): string[] {
   const result = decoded(event.result);
-  const line = isObject(result)
+  const line = isRecord(result)
     ? `${ts}  ✦ turn done: action=${asText(result.action ?? '?')} reason=${trunc(asText(result.reason ?? ''), max)}`
     : `${ts}  ✦ turn done: ${trunc(asText(result), max)}`;
   return [line, ''];
@@ -332,7 +332,7 @@ function short(id: unknown): string {
 function parse(line: string): Json | undefined {
   try {
     const value: unknown = JSON.parse(line);
-    return isObject(value) ? value : undefined;
+    return isRecord(value) ? value : undefined;
   } catch {
     return undefined;
   }
@@ -341,11 +341,6 @@ function parse(line: string): Json | undefined {
 /** The object blocks of `event.message.content` (anything else there is skipped). */
 function contentBlocks(event: Json): Json[] {
   const message = event.message;
-  const content = isObject(message) ? message.content : undefined;
-  return Array.isArray(content) ? content.filter(isObject) : [];
+  const content = isRecord(message) ? message.content : undefined;
+  return Array.isArray(content) ? content.filter(isRecord) : [];
 }
-
-function isObject(value: unknown): value is Json {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-

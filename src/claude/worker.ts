@@ -4,12 +4,13 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import type { Config } from '../config.ts';
 import type { Logger } from '../log/logger.ts';
 import type { Transcript } from '../log/transcript.ts';
+import { isRecord } from '../text/json.ts';
 import { FORBIDDEN_FLAG } from './argv.ts';
 import { ToolErrorBreaker } from './breaker.ts';
 import { WireCapture } from './capture.ts';
 import { type ChildExit, type ChildProcess, spawnChild } from './child.ts';
 import { failedMcpServers, relayError, userLine } from './events.ts';
-import { type AbortReason, isRecord, Turn, type TurnResult } from './turn.ts';
+import { type AbortReason, Turn, type TurnResult } from './turn.ts';
 
 /** Stderr text meaning the `--resume` id is unusable (verified against claude 2.1.138). */
 const STALE_SESSION_PATTERNS = ['No conversation found with session ID', '--resume requires a valid session ID'];
@@ -48,7 +49,7 @@ export interface WorkerOptions {
 export class ClaudeWorker {
   private child: ChildProcess | undefined;
   private ready = deferred<ChildProcess>();
-  private sessionIdValue: string | undefined;
+  private sessionId: string | undefined;
   /** The id the current child was started with (`--resume`), for stale-session detection. */
   private resumed: string | undefined;
   private childStderr: string[] = [];
@@ -68,13 +69,9 @@ export class ClaudeWorker {
   constructor(options: WorkerOptions) {
     this.o = options;
     this.log = options.log;
-    this.sessionIdValue = options.sessionId;
+    this.sessionId = options.sessionId;
     this.breaker = new ToolErrorBreaker(options.config.toolErrorMaxCount, options.config.toolErrorWindowSeconds);
     this.capture = new WireCapture(options.config.ccLogsDir, options.log);
-  }
-
-  get sessionId(): string | undefined {
-    return this.sessionIdValue;
   }
 
   /** First spawn; rejects (failing boot) when `claude` can't be started. */
@@ -105,8 +102,8 @@ export class ClaudeWorker {
 
   /** Owner-requested fresh session: drop the id and respawn without `--resume`. */
   async resetSession(): Promise<void> {
-    this.log.warn(`session reset: dropping session_id=${this.sessionIdValue ?? 'none'}, respawning fresh`);
-    this.sessionIdValue = undefined;
+    this.log.warn(`session reset: dropping session_id=${this.sessionId ?? 'none'}, respawning fresh`);
+    this.sessionId = undefined;
     rmSync(this.o.config.sessionIdPath, { force: true });
     if (this.turn) this.emit(this.turn.abort('session-reset'));
     await this.killChild('session-reset');
@@ -115,7 +112,6 @@ export class ClaudeWorker {
   async stop(): Promise<void> {
     this.stopping.abort();
     clearInterval(this.liveness);
-    this.breaker.reset();
     this.ready.reject(new Error('claude worker stopped'));
     await this.child?.kill();
     this.capture.close();
@@ -127,12 +123,12 @@ export class ClaudeWorker {
   }
 
   private spawn(): ChildProcess {
-    const argv = this.o.argv(this.sessionIdValue);
+    const argv = this.o.argv(this.sessionId);
     if (argv.includes(FORBIDDEN_FLAG)) throw new Error(`${FORBIDDEN_FLAG} found in argv at spawn time — refusing to start`);
     const { model, enabled, mcpTools } = this.o.describe;
     this.log.info(`spawning claude (model=${model}, enabled=${enabled.length ? JSON.stringify(enabled) : '[base only]'}, mcp_tools=${mcpTools})`);
-    this.capture.open(this.sessionIdValue);
-    this.resumed = argv.includes('--resume') ? this.sessionIdValue : undefined;
+    this.capture.open(this.sessionId);
+    this.resumed = argv.includes('--resume') ? this.sessionId : undefined;
     this.childStderr = [];
     this.reportedServers = new Set();
     this.intentional = undefined;
@@ -187,8 +183,8 @@ export class ClaudeWorker {
   private learnSession(id: string): void {
     this.log.info(`cc session id ${id}`);
     this.capture.sessionKnown(id);
-    if (id === this.sessionIdValue) return;
-    this.sessionIdValue = id;
+    if (id === this.sessionId) return;
+    this.sessionId = id;
     try {
       writeFileSync(this.o.config.sessionIdPath, id);
     } catch (err) {
@@ -233,12 +229,12 @@ export class ClaudeWorker {
   private emit(result: TurnResult): void {
     this.turn = undefined;
     this.awaitingInit = false;
-    this.breaker.cancelWindow();
     this.o.onResult(result);
   }
 
   private async killChild(reason: AbortReason): Promise<void> {
     if (!this.child) return;
+    this.renewReady(); // a send from here on waits for the respawned child, not this dying one
     this.intentional = reason;
     await this.child.kill();
   }
@@ -247,7 +243,7 @@ export class ClaudeWorker {
     if (this.child !== child) return;
     this.child = undefined;
     this.capture.close();
-    this.ready = deferred();
+    this.renewReady();
     if (this.stopping.signal.aborted) return;
     const rc = exit.code ?? 'none';
     const intentional = this.intentional;
@@ -266,7 +262,8 @@ export class ClaudeWorker {
 
   private async recoverStale(staleId: string): Promise<void> {
     this.log.warn(`cc subprocess rejected stale session_id=${staleId}; dropping it and respawning with a fresh session`);
-    this.sessionIdValue = undefined;
+    this.sessionId = undefined;
+    rmSync(this.o.config.sessionIdPath, { force: true });
     await this.o.onStaleSession(staleId).catch((err: unknown) => this.log.debug('on_stale_session callback failed', { err }));
     return this.respawnAfter(this.o.config.crashBackoffBase);
   }
@@ -292,6 +289,13 @@ export class ClaudeWorker {
       this.log.error('claude respawn failed', { err });
       return this.recoverCrash();
     }
+  }
+
+  /** Swap in a pending `ready`; whoever still waits on the old one follows it to the next child. */
+  private renewReady(): void {
+    const next = deferred<ChildProcess>();
+    this.ready.resolve(next.promise);
+    this.ready = next;
   }
 
   private async whenReady(): Promise<ChildProcess> {
