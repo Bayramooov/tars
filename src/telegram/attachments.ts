@@ -7,7 +7,6 @@ import type { Message } from 'grammy/types';
 
 import type { Logger } from '../log/logger.ts';
 import { IMAGE_EXTS, TEXT_EXTS } from '../stores/attachments.ts';
-import { cpSlice } from '../text/clip.ts';
 import { scrub } from '../text/scrub.ts';
 import type { AttachmentIngest } from './dispatcher.ts';
 
@@ -115,14 +114,24 @@ function extOf(name: string): string {
   return dot < 0 ? '' : name.slice(dot + 1).toLowerCase();
 }
 
-/** No path separators or NULs, no leading/trailing dots or spaces, at most 120 characters with the extension kept. */
+/**
+ * No path separators or NULs, no leading/trailing dots or spaces, at most 120 UTF-8 bytes with the extension kept.
+ * Bytes, not characters: Linux caps a file name at 255 bytes, which 120 emoji or CJK characters exceed.
+ */
 function safeFilename(name: string, fallback: string): string {
   const cleaned = name.replace(/[/\\]/g, '_').replaceAll('\0', '').replace(/^[. ]+|[. ]+$/g, '');
   if (!cleaned) return fallback;
-  if (Array.from(cleaned).length <= 120) return cleaned;
+  if (Buffer.byteLength(cleaned) <= 120) return cleaned;
   const ext = extOf(cleaned);
-  const head = cpSlice(cleaned, 120 - (ext ? Array.from(ext).length + 1 : 0)).text;
-  return ext ? `${head}.${ext}` : head;
+  const suffix = ext ? `.${ext}` : '';
+  let head = '';
+  let bytes = Buffer.byteLength(suffix);
+  for (const ch of cleaned) {
+    bytes += Buffer.byteLength(ch);
+    if (bytes > 120) break;
+    head += ch;
+  }
+  return head + suffix;
 }
 
 /** `512B`, `1.2KB`, `45.0MB`: binary units, one decimal. */
