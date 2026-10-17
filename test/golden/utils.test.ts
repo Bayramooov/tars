@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { formatMessageRefs, messageLink, messageRef } from '../../src/telegram/links.ts';
-import { chunkText } from '../../src/text/chunk.ts';
+import { chunkMarkdown, chunkText } from '../../src/text/chunk.ts';
 import { parseFrontmatter, renderFrontmatter, requireNameAndDescription } from '../../src/text/frontmatter.ts';
 import { markdownToTelegramHtml } from '../../src/text/markdown.ts';
 import { normalizeInbound } from '../../src/text/normalize.ts';
@@ -38,6 +38,15 @@ describe('chunkText (golden)', () => {
       expect(chunk.length).toBeLessThanOrEqual(c.limit);
       expect(chunk).not.toMatch(/^[\udc00-\udfff]|[\ud800-\udbff]$/);
     }
+  });
+});
+
+describe('chunkMarkdown', () => {
+  it('closes a code block cut between chunks and reopens it in the next, language kept', () => {
+    const code = Array.from({ length: 40 }, (_, i) => `line ${i}`).join('\n');
+    const chunks = chunkMarkdown(`Here:\n\n\`\`\`ts\n${code}\n\`\`\`\nafter`, 150);
+    expect(chunks.length).toBeGreaterThan(2);
+    for (const chunk of chunks.filter((c) => c.includes('line'))) expect(markdownToTelegramHtml(chunk)).toMatch(/^<pre><code class="language-ts">line/);
   });
 });
 

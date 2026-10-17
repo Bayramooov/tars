@@ -276,6 +276,26 @@ describe('engine: turn endings', () => {
     expect(t.engine.pendingCount).toBe(0);
   });
 
+  it('drops a turn opening that the worker shutdown cut short, quietly', async () => {
+    const t = setup();
+    let fail = (_err: Error) => {};
+    t.worker.send = () => new Promise((_resolve, reject) => (fail = reject));
+    await t.engine.submit(msg('x'));
+    await until(() => t.log.text().includes('hot-path stage=worker-send'));
+    t.engine.stop();
+    fail(new Error('claude worker stopped'));
+    await new Promise((r) => setTimeout(r, 10));
+    expect(t.log.records.filter((r) => r.level === 'ERROR')).toEqual([]);
+  });
+
+  it('shows no typing for a reminder injected into a running turn', async () => {
+    const t = setup();
+    await startTurn(t, reminder('first'));
+    await t.engine.submit({ ...reminder('second'), chatId: 222 });
+    expect(t.worker.injected).toHaveLength(1);
+    expect(t.typed).toEqual([]);
+  });
+
   it('re-engages a silent stop once, then accepts it', async () => {
     const t = setup();
     await startTurn(t, msg('hi'));

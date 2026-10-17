@@ -99,12 +99,12 @@ describe('stream-json helpers', () => {
     expect(userLine('Ўз "hi"')).toBe('{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Ўз \\"hi\\""}]}}\n');
   });
 
-  it('relays top-level errors, with transparent API retries as warnings', () => {
+  it('relays top-level errors; retries and failed results (the engine alerts on those) as warnings', () => {
     const log = memoryLogger();
     relayError({ type: 'result', subtype: 'success', is_error: true, api_error_status: 529 }, log);
     relayError({ type: 'system', subtype: 'api_retry', error: 'overloaded' }, log);
     relayError({ type: 'assistant' }, log);
-    expect(log.text()).toBe('ERROR cc reported error in result/success event: is_error=true, api_error_status=529\nWARNING cc reported error in system/api_retry event: error=overloaded');
+    expect(log.text()).toBe('WARNING cc reported error in result/success event: is_error=true, api_error_status=529\nWARNING cc reported error in system/api_retry event: error=overloaded');
   });
 
   it('lists MCP servers that did not connect', () => {

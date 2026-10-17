@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, utimesSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -54,6 +54,22 @@ describe('daily log file', () => {
     expect(readFileSync(path, 'utf8')).toBe('today\n');
     expect(readFileSync(`${path}.${stamp}`, 'utf8')).toBe('yesterday\n');
     expect(readdirSync(dir).filter((n) => n.startsWith('tars.log.'))).toHaveLength(7);
+  });
+
+  it('keeps logging after a rotation that failed', () => {
+    const dir = tempDir();
+    const path = join(dir, 'tars.log');
+    writeFileSync(path, 'yesterday\n');
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    utimesSync(path, yesterday, yesterday);
+    const stamp = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+    mkdirSync(`${path}.${stamp}`); // the rotation target can't be replaced
+    const file = openDailyFile(path, 7);
+    expect(() => file.write('lost\n')).toThrow();
+    file.write('after\n');
+    file.close();
+    expect(readFileSync(path, 'utf8')).toBe('yesterday\nafter\n');
   });
 });
 

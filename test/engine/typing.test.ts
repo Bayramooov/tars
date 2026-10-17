@@ -48,9 +48,12 @@ describe('typing indicator', () => {
     expect(calls).toEqual([1, 2, 2, 2]);
   });
 
-  it('re-arms a finished indicator for injected chats', async () => {
+  it('drops every chat that replied within the first second', async () => {
     const { typing, calls } = setup();
-    await typing.rearm(new Set([4]));
-    expect(calls).toEqual([4]);
+    await typing.start(new Set([1, 2]));
+    typing.replied(1);
+    typing.replied(2);
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(calls).toEqual([1, 2, 2]);
   });
 });

@@ -12,7 +12,8 @@ interface Sink {
  * Byte-faithful record of the Claude Code wire, for post-mortems (`data/cc_logs`):
  * `<dir>/<session>.stream.jsonl` gets every stdout line, `.stderr.log` every
  * stderr line with a local timestamp. Until the session id is known the
- * files are `pending-<ms>.*`; `system/init` renames them. Never rotated.
+ * files are `pending-<ms>.*`; `system/init` renames them. Boot deletes
+ * files untouched for 30 days.
  */
 export class WireCapture {
   private stream: Sink | undefined;

@@ -52,10 +52,11 @@ const VECTORS: [string, (string | null)[] | false][] = [
   ['0 9 1 * 3', ['2026-10-21 09:00:00', '2027-03-01 09:00:00']],
   ['0 9 13 * 5', ['2026-10-23 09:00:00', '2027-03-05 09:00:00']],
   // valid, but no next fire (never, or more than 50 years on)
-  ['0 6 31 2 *', [null, null]],
-  ['0 6 31 2 1', [null, null]],
-  ['0 6 1 * 5#2', [null, null]],
-  ['0 0 1 1 * 0 2077', [null, '2077-01-01 00:00:00']],
+  // They parse, but never fire: refused so a reminder can't fire once and stall.
+  ['0 6 31 2 *', false],
+  ['0 6 31 2 1', false],
+  ['0 6 1 * 5#2', false],
+  ['0 0 1 1 * 0 2077', false],
   // refused
   ['not a cron', false],
   ['', false],
@@ -82,7 +83,7 @@ const VECTORS: [string, (string | null)[] | false][] = [
 
 describe('cron (UTC)', () => {
   it.each(VECTORS)('%j', (expr, expected) => {
-    expect(isValidCron(expr)).toBe(expected !== false);
+    expect(isValidCron(expr, A)).toBe(expected !== false);
     if (expected === false) return;
     const next = [A, B].map((after) => {
       try {
@@ -100,8 +101,10 @@ describe('cron (UTC)', () => {
     expect(nextFire('* * * * * */10', new Date('2026-10-17T06:00:30.250Z'))).toBe('2026-10-17 06:00:40');
   });
 
-  it('says why there is no next fire', () => {
+  it('says why there is no next fire, looking 50 years ahead', () => {
     expect(() => nextFire('0 6 31 2 *', A)).toThrow('failed to find next date for cron expression "0 6 31 2 *"');
+    expect(() => nextFire('0 0 1 1 * 0 2077', A)).toThrow('failed to find next date for cron expression "0 0 1 1 * 0 2077"');
+    expect(nextFire('0 0 1 1 * 0 2077', B)).toBe('2077-01-01 00:00:00');
     expect(() => nextFire('not a cron', A)).toThrow('invalid cron expression "not a cron"');
   });
 

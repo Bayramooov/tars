@@ -57,6 +57,26 @@ describe('telegram_send_message / telegram_reply_to_message', () => {
     expect(t.fake.sent().map((c) => c.payload.message_thread_id)).toEqual([undefined, 7]);
   });
 
+  it('reports which chunks went out when a later one fails, so only the rest is resent', async () => {
+    const t = setup();
+    t.fake.fail('sendMessage', 400, 'Bad Request: message is too long', 1);
+    const out = await t.send.run({ chat_id: 111, text: `${'a'.repeat(4000)}\n\n${'b'.repeat(100)}`, reply_to_message_id: null, message_thread_id: null });
+    expect(out).toEqual({
+      content: "sent 1 of 2 chunks (message_ids=[5001]), then failed: Call to 'sendMessage' failed! (400: Bad Request: message is too long)",
+      isError: true,
+      data: { message_id: 5001, message_ids: [5001], chat_id: 111 },
+    });
+  });
+
+  it('keeps a long code block a code block in every chunk', async () => {
+    const t = setup();
+    const code = Array.from({ length: 600 }, (_, i) => `line ${i}`).join('\n');
+    await t.send.run({ chat_id: 111, text: `\`\`\`py\n${code}\n\`\`\``, reply_to_message_id: null, message_thread_id: null });
+    const texts = t.fake.sent().map((c) => String(c.payload.text));
+    expect(texts.length).toBeGreaterThan(1);
+    for (const text of texts) expect(text).toMatch(/^<pre><code class="language-py">/);
+  });
+
   it('surfaces Telegram failures and keeps delivered chunks', async () => {
     const t = setup();
     t.fake.fail('sendMessage', 400, 'Bad Request: message text is empty');

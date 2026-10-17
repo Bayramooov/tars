@@ -178,7 +178,7 @@ describe('boot: default-reminders.json', () => {
     t.write('{"reminders": 5}');
     expect(() => t.boot()).toThrow(expect.objectContaining({ name: 'ReminderConfigError' }) as Error);
     t.declare({ name: 'fresh', cron: '0 6 * * *', text: 'x' }, { name: 'never', cron: '0 6 31 2 *', text: 'y' });
-    expect(() => t.boot()).toThrow('failed to find next date for cron expression "0 6 31 2 *"');
+    expect(() => t.boot()).toThrow('reminders[1]: invalid cron expression "0 6 31 2 *"');
     expect(t.rows(committed).map((r) => r.text)).toEqual([TRENDS.text]);
   });
 });

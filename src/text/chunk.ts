@@ -32,4 +32,21 @@ export function chunkText(text: string, limit = TELEGRAM_TEXT_LIMIT): string[] {
   return chunks;
 }
 
+/**
+ * `chunkText` for Markdown: a ``` code block cut between two chunks is closed
+ * at the end of one and reopened, with its language, at the start of the
+ * next, so every chunk renders on its own. The added fences render as markup,
+ * not text, so Telegram's limit still holds.
+ */
+export function chunkMarkdown(text: string, limit = TELEGRAM_TEXT_LIMIT): string[] {
+  let reopen = '';
+  return chunkText(text, limit).map((chunk) => {
+    const whole = reopen + chunk;
+    const fences = whole.match(/```[\p{L}\p{N}_]*/gu) ?? [];
+    const open = fences.length % 2 === 1 ? fences.at(-1) : undefined;
+    reopen = open === undefined ? '' : `${open}\n`;
+    return open === undefined ? whole : `${whole}\n\`\`\``;
+  });
+}
+
 const isHighSurrogate = (code: number) => code >= 0xd800 && code <= 0xdbff;

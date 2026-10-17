@@ -92,6 +92,8 @@ describe('reminder_set', () => {
     expect(t.db.prepare('SELECT cron_expr, status, auto_seed_key FROM reminders').get()).toEqual({ cron_expr: '0 9 * * 1-5', status: 'pending', auto_seed_key: null });
     expect(await t.set(at, { cron_expr: 'not a cron' })).toEqual({ content: 'invalid cron expression: "not a cron"', isError: true });
     expect(await t.set(at, { cron_expr: '' })).toEqual({ content: 'invalid cron expression: ""', isError: true });
+    // Parses, but February 30th never comes: it would fire once, then stall.
+    expect(await t.set(at, { cron_expr: '0 9 30 2 1' })).toEqual({ content: 'invalid cron expression: "0 9 30 2 1"', isError: true });
     expect((await t.set('tomorrow', { cron_expr: 'not a cron' })).content).toBe('invalid trigger_at format: "tomorrow"');
   });
 });

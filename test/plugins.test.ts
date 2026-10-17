@@ -28,7 +28,7 @@ describe('plugins.json (golden)', () => {
     const log = memoryLogger();
     const path = c.plugins === null ? join(tempDir(), 'missing.json') : write(c.plugins);
     const plugins = loadPlugins(path, c.env, log);
-    const written = JSON.parse(readFileSync(writeMcpConfig('http://127.0.0.1:41234/mcp', plugins, log), 'utf8')) as unknown;
+    const written = JSON.parse(readFileSync(writeMcpConfig(join(tempDir(), 'mcp.json'), 'http://127.0.0.1:41234/mcp', plugins, log), 'utf8')) as unknown;
     expect(written).toEqual(c.mcp_config);
   });
 

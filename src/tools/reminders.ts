@@ -32,7 +32,7 @@ function setReminder(db: Db, args: z.output<typeof SET_ARGS>): ToolResult {
   const year = new Date(at).getUTCFullYear();
   if (year < 1 || year > 9999) return refuse('trigger_at is out of range');
   if (at <= Date.now()) return refuse('trigger_at must be in the future');
-  if (args.cron_expr !== null && !isValidCron(args.cron_expr)) return refuse(`invalid cron expression: ${JSON.stringify(args.cron_expr)}`);
+  if (args.cron_expr !== null && !isValidCron(args.cron_expr, new Date(at))) return refuse(`invalid cron expression: ${JSON.stringify(args.cron_expr)}`);
   const id = insertReminder(db, { chatId: args.chat_id, userId: args.user_id, text: args.text, triggerAt: sqliteTime(new Date(at)), cronExpr: args.cron_expr });
   return { content: `reminder #${id} (${args.cron_expr ? 'recurring' : 'one-shot'}) set for ${args.trigger_at}`, data: { reminder_id: id } };
 }

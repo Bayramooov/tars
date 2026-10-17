@@ -21,9 +21,13 @@ export function openDailyFile(path: string, backups = 7): DailyFile {
       const now = new Date();
       if (now >= rolloverAt) {
         closeSync(fd);
-        rotate(path, rolloverAt, backups);
-        fd = openSync(path, 'a');
-        rolloverAt = nextMidnight(now);
+        try {
+          rotate(path, rolloverAt, backups);
+        } finally {
+          // A failed rotation loses this line, never the file: the next write appends again.
+          fd = openSync(path, 'a');
+          rolloverAt = nextMidnight(now);
+        }
       }
       writeSync(fd, text);
     },

@@ -49,9 +49,17 @@ function clean(raw: string | undefined): { text: string; flags: Set<InputFlag> }
   return { text: scrub(text), flags };
 }
 
-/** Scrub every string value, keeping the stored update valid JSON. */
+/**
+ * Scrub every string value, keeping the stored update valid JSON. A value is
+ * checked in its normalised form, as `clean` does, and kept verbatim unless
+ * that form held a secret.
+ */
 function scrubStrings(value: unknown): unknown {
-  if (typeof value === 'string') return scrub(value);
+  if (typeof value === 'string') {
+    const normalised = normalizeInbound(value).text;
+    const scrubbed = scrub(normalised);
+    return scrubbed === normalised ? value : scrubbed;
+  }
   if (Array.isArray(value)) return value.map(scrubStrings);
   if (typeof value !== 'object' || value === null) return value;
   return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, scrubStrings(v)]));

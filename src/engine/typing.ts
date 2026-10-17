@@ -14,7 +14,7 @@ export class TypingIndicator {
   private chats = new Set<number>();
   private startedAt = 0;
   private timer: NodeJS.Timeout | undefined;
-  private deferred: NodeJS.Timeout | undefined;
+  private readonly deferred = new Map<number, NodeJS.Timeout>();
   private readonly send: (chatId: number) => Promise<void>;
   private readonly log: Logger;
 
@@ -54,24 +54,19 @@ export class TypingIndicator {
     this.ensureLoop();
   }
 
-  /** Messages were injected mid-turn: widen a running indicator, or restart a finished one. */
-  async rearm(chats: ReadonlySet<number>): Promise<void> {
-    if (!this.timer) return this.start(chats);
-    chats.forEach((c) => this.chats.add(c));
-  }
-
   /** A chat got its reply: stop its indicator, but not before it was visible for a second. */
   replied(chatId: number): void {
     if (!this.chats.has(chatId)) return;
     const remaining = MIN_VISIBLE_MS - (performance.now() - this.startedAt);
     if (remaining <= 0) return this.remove(chatId);
-    clearTimeout(this.deferred);
-    this.deferred = setTimeout(() => this.remove(chatId), remaining);
+    clearTimeout(this.deferred.get(chatId));
+    this.deferred.set(chatId, setTimeout(() => this.remove(chatId), remaining));
   }
 
   stop(): void {
     this.chats.clear();
-    clearTimeout(this.deferred);
+    this.deferred.forEach((timer) => clearTimeout(timer));
+    this.deferred.clear();
     clearInterval(this.timer);
     this.timer = undefined;
   }

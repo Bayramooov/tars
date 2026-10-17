@@ -125,7 +125,11 @@ export class McpHttpServer {
     const port = this.port ?? 0;
     const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
       sessionIdGenerator: randomUUID,
-      onsessioninitialized: (id) => void this.sessions.set(id, transport),
+      onsessioninitialized: (id) => {
+        // One claude child at a time, and a killed one sends no DELETE: a new session retires the old.
+        for (const old of this.sessions.values()) void old.close();
+        this.sessions.set(id, transport);
+      },
       enableDnsRebindingProtection: true,
       allowedHosts: [`127.0.0.1:${port}`, `localhost:${port}`, `[::1]:${port}`],
       allowedOrigins: [`http://127.0.0.1:${port}`, `http://localhost:${port}`, `http://[::1]:${port}`],

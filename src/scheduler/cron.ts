@@ -78,8 +78,11 @@ interface Schedule {
   dow: DayRule;
 }
 
-/** Whether `expr` is a cron expression tars can schedule. */
-export const isValidCron = (expr: string) => parse(expr) !== undefined;
+/** Whether tars can schedule `expr`: it parses and fires at least once after `after`, so a reminder never fires once and stalls. */
+export function isValidCron(expr: string, after: Date = new Date()): boolean {
+  const schedule = parse(expr);
+  return schedule !== undefined && nextTime(schedule, after) !== undefined;
+}
 
 /** The first fire strictly after `after`, as the stored UTC timestamp. */
 export function nextFire(expr: string, after: Date): string {

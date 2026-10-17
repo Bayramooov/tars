@@ -7,12 +7,13 @@ const W = String.raw`[\p{L}\p{N}_]`;
 const B = String.raw`(?:(?<=${W})(?!${W})|(?<!${W})(?=${W}))`;
 
 const PATTERNS = [
-  // Authorization / API-key headers and assignments
-  String.raw`(?:${B})(authorization|api[-_ ]?key|x[-_]api[-_]key)\s*[:=]\s*["']?(bearer\s+)?[A-Za-z0-9._\-+/=]{16,}["']?`,
+  // Authorization / API-key headers and assignments, quoted JSON keys included
+  String.raw`(?:${B})(authorization|api[-_ ]?key|x[-_]api[-_]key)["']?\s*[:=]\s*["']?((?:bearer|basic|token)\s+)?[A-Za-z0-9._\-+/=]{16,}["']?`,
   // sk-… keys (OpenAI, Anthropic, many vendors)
   String.raw`${B}sk-[A-Za-z0-9_\-]{20,}`,
-  // GitHub tokens
+  // GitHub tokens, classic and fine-grained
   String.raw`${B}gh[pousr]_[A-Za-z0-9]{36,}${B}`,
+  String.raw`${B}github_pat_[A-Za-z0-9_]{22,}${B}`,
   // AWS access key id
   String.raw`${B}AKIA[0-9A-Z]{16}${B}`,
   // Slack tokens

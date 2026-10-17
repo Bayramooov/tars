@@ -1,4 +1,4 @@
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { Bot, Transformer } from 'grammy';
@@ -13,7 +13,7 @@ import { ClaudeWorker } from './claude/worker.ts';
 import type { Config } from './config.ts';
 import { type Db, openDatabase } from './db/database.ts';
 import { takeUnconsumedInbound } from './db/messages.ts';
-import { insertToolCall } from './db/toolcalls.ts';
+import { insertToolCall, pruneToolCalls } from './db/toolcalls.ts';
 import { Engine } from './engine/engine.ts';
 import { TypingIndicator } from './engine/typing.ts';
 import { acquireInstanceLock } from './lock.ts';
@@ -105,6 +105,7 @@ export class App {
     const r = this.running;
     this.prepareDisk();
     r.db = openDatabase(this.config.dbPath, this.log.child('db'));
+    pruneToolCalls(r.db);
     this.log.info(`database ready at ${this.config.dbPath}`);
     r.plugins = loadPlugins(this.config.pluginsPath, this.o.env, this.log.child('plugins'));
     this.log.info(pluginsSummary(r.plugins));
@@ -187,6 +188,8 @@ export class App {
     const c = this.config;
     const dirs = [c.dataDir, c.memoriesDir, c.ccLogsDir, c.attachmentsDir, c.rendersDir, c.logDir, join(c.dataDir, 'prompt_backups'), c.skillsDir];
     for (const dir of dirs) mkdirSync(dir, { recursive: true });
+    pruneOldFiles(c.ccLogsDir);
+    pruneOldFiles(c.rendersDir);
     this.releaseLock = acquireInstanceLock(c.dataDir);
     bootstrapAccess(c.accessPath, this.log);
   }
@@ -228,7 +231,7 @@ export class App {
   }
 
   private async startWorker(plugins: Plugins, mcp: McpHttpServer, stores: Stores): Promise<ClaudeWorker> {
-    const mcpConfigPath = writeMcpConfig(mcp.url, plugins, this.log);
+    const mcpConfigPath = writeMcpConfig(join(this.config.dataDir, 'mcp.json'), mcp.url, plugins, this.log);
     const indexes = () => ({ skills: renderSkillsIndex(stores.skills), memory: renderMemoryIndex(stores.memory) });
     const spec = spawnSpec(this.config, plugins, { mcpConfigPath, toolNames: mcp.toolNames, indexes });
     const worker = new ClaudeWorker({
@@ -300,6 +303,15 @@ export class App {
         this.o.onFatal('telegram polling failed');
       });
     });
+  }
+}
+
+/** Delete the files in `dir` untouched for 30 days: raw captures and renders would otherwise pile up forever. */
+function pruneOldFiles(dir: string): void {
+  const cutoff = Date.now() - 30 * 86_400_000;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isFile() && statSync(path).mtimeMs < cutoff) rmSync(path);
   }
 }
 

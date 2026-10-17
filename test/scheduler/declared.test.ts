@@ -74,6 +74,7 @@ describe('default-reminders.json', () => {
     [{ name: 'a', cron: '0 6 * * *', text: ' \n ' }, "reminders[0]: 'text' must be non-empty"],
     [{ name: 'a', cron: '0 6 * * *', text: ['ok', 5] }, "reminders[0]: 'text' list items must be strings"],
     [{ name: 'a', cron: 'not a cron', text: 'x' }, 'reminders[0]: invalid cron expression "not a cron"'],
+    [{ name: 'a', cron: '0 6 31 2 *', text: 'x' }, 'reminders[0]: invalid cron expression "0 6 31 2 *"'],
     [{ name: 'a', cron: '0 6 * * *', text: 'x', chat: 'nope' }, `reminders[0]: 'chat' must be "owner" or a numeric chat id, got "nope"`],
     [{ name: 'a', cron: '0 6 * * *', text: 'x', chat: true }, `reminders[0]: 'chat' must be "owner" or a numeric chat id, got true`],
     [{ name: 'a', cron: '0 6 * * *', text: 'x', chat: null }, `reminders[0]: 'chat' must be "owner" or a numeric chat id, got null`],

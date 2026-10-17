@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, utimesSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -32,6 +32,25 @@ describe('app lifecycle', () => {
     await t.app.start();
     await t.telegram.waitFor('sendMessage', (p) => p.text === 'echo: from before', 15_000);
     expect(t.log.text()).toContain('replaying 1 message(s) buffered before the last shutdown');
+  });
+
+  it('deletes raw captures, renders and tool-call rows older than 30 days at boot', async () => {
+    const t = make();
+    const old = new Date(Date.now() - 31 * 86_400_000);
+    for (const dir of [t.config.ccLogsDir, t.config.rendersDir]) {
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, 'old.png'), 'x');
+      utimesSync(join(dir, 'old.png'), old, old);
+      writeFileSync(join(dir, 'new.png'), 'x');
+    }
+    const db = openDatabase(t.config.dbPath, memoryLogger());
+    db.prepare("INSERT INTO tool_calls(tool_name, args_json, created_at) VALUES ('old', '{}', datetime('now', '-31 days')), ('new', '{}', datetime('now'))").run();
+    db.close();
+    await t.app.start();
+    for (const dir of [t.config.ccLogsDir, t.config.rendersDir]) expect(readdirSync(dir).filter((name) => name.endsWith('.png'))).toEqual(['new.png']);
+    const reopened = openDatabase(t.config.dbPath, memoryLogger());
+    expect(reopened.prepare('SELECT tool_name FROM tool_calls').pluck().all()).toEqual(['new']);
+    reopened.close();
   });
 
   it('recovers from a stale session: fresh session, recap stashed, owner told', async () => {

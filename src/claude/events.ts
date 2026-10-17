@@ -13,7 +13,8 @@ export function failedMcpServers(event: Record<string, unknown>): { name: string
 /**
  * Log an error Claude Code reports at the top level of any non-tool event.
  * `system/api_retry` is its own transparent retry of an overloaded API — it
- * heals itself, so it is a warning, not an owner-alerting error.
+ * heals itself — and the engine raises its own alert for a failed `result`,
+ * so both are warnings, not owner-alerting errors.
  */
 export function relayError(event: Record<string, unknown>, log: Logger): void {
   const bits = [
@@ -24,6 +25,6 @@ export function relayError(event: Record<string, unknown>, log: Logger): void {
   if (!bits.length) return;
   const subtype = event.subtype ? asText(event.subtype) : '-';
   const message = `cc reported error in ${asText(event.type)}/${subtype} event: ${bits.join(', ')}`;
-  if (event.type === 'system' && event.subtype === 'api_retry') log.warn(message);
+  if (event.type === 'result' || (event.type === 'system' && event.subtype === 'api_retry')) log.warn(message);
   else log.error(message);
 }

@@ -55,7 +55,7 @@ const required = (name: string) =>
 
 const text = (fallback: string) => optional.transform((raw) => raw ?? fallback);
 
-/** An integer setting; with no `fallback` it is required. */
+/** A non-negative integer setting; with no `fallback` it is required. */
 const int = (name: string, fallback?: number) =>
   optional.transform((raw, ctx) => {
     if (raw === undefined && fallback !== undefined) return fallback;
@@ -63,23 +63,31 @@ const int = (name: string, fallback?: number) =>
       ctx.addIssue({ code: 'custom', message: `missing required environment variable: ${name}` });
       return z.NEVER;
     }
-    if (/^[+-]?\d+$/.test(raw.trim())) return Number(raw);
-    ctx.addIssue({ code: 'custom', message: `${name} must be an integer, got ${JSON.stringify(raw)}` });
+    if (/^\+?\d+$/.test(raw.trim())) return Number(raw);
+    ctx.addIssue({ code: 'custom', message: `${name} must be a non-negative integer, got ${JSON.stringify(raw)}` });
     return z.NEVER;
   });
 
+/** A duration or window in seconds: zero would spin a timer, so it must be positive. */
 const float = (name: string, fallback: number) =>
   optional.transform((raw, ctx) => {
     if (raw === undefined) return fallback;
     const value = Number(raw);
-    if (raw.trim() && Number.isFinite(value)) return value;
-    ctx.addIssue({ code: 'custom', message: `${name} must be a number, got ${JSON.stringify(raw)}` });
+    if (Number.isFinite(value) && value > 0) return value;
+    ctx.addIssue({ code: 'custom', message: `${name} must be a positive number, got ${JSON.stringify(raw)}` });
     return z.NEVER;
   });
 
-/** Truthy spellings `1/true/yes/on`; anything else is false. */
-const bool = (fallback: boolean) =>
-  optional.transform((raw) => (raw === undefined ? fallback : ['1', 'true', 'yes', 'on'].includes(raw.trim().toLowerCase())));
+/** `1/true/yes/on` or `0/false/no/off`, any case; a typo stops boot instead of silently meaning false. */
+const bool = (name: string, fallback: boolean) =>
+  optional.transform((raw, ctx) => {
+    if (raw === undefined) return fallback;
+    const value = raw.trim().toLowerCase();
+    if (['1', 'true', 'yes', 'on'].includes(value)) return true;
+    if (['0', 'false', 'no', 'off'].includes(value)) return false;
+    ctx.addIssue({ code: 'custom', message: `${name} must be true or false, got ${JSON.stringify(raw)}` });
+    return z.NEVER;
+  });
 
 const LOG_LEVELS: Record<string, Level> = { DEBUG: 'DEBUG', NOTSET: 'DEBUG', INFO: 'INFO', WARNING: 'WARNING', WARN: 'WARNING', ERROR: 'ERROR', CRITICAL: 'CRITICAL', FATAL: 'CRITICAL' };
 
@@ -104,7 +112,7 @@ const ENV = z.object({
   TARS_EFFORT: required('TARS_EFFORT'),
   CLAUDE_CODE_BIN: text('claude'),
   TARS_DATA_DIR: text('./data'),
-  TARS_SELF_REFLECTION_ENABLED: bool(true),
+  TARS_SELF_REFLECTION_ENABLED: bool('TARS_SELF_REFLECTION_ENABLED', true),
   TARS_SELF_REFLECTION_CRON: text('0 0 * * *'),
   TARS_DEBOUNCE_MS: int('TARS_DEBOUNCE_MS', 0),
   TARS_RATE_LIMIT_PER_MIN: int('TARS_RATE_LIMIT_PER_MIN', 20),
@@ -117,7 +125,7 @@ const ENV = z.object({
   TARS_CRASH_BACKOFF_CAP: float('TARS_CRASH_BACKOFF_CAP', 64),
   TARS_CRASH_LIMIT: int('TARS_CRASH_LIMIT', 10),
   TARS_CRASH_WINDOW_SECONDS: float('TARS_CRASH_WINDOW_SECONDS', 600),
-  TARS_BROWSER_HEADLESS: bool(true),
+  TARS_BROWSER_HEADLESS: bool('TARS_BROWSER_HEADLESS', true),
   TARS_LOG_LEVEL: logLevel,
   TARS_LOG_TRANSCRIPT: logTranscript,
   TARS_ACCESS_PATH: optional,

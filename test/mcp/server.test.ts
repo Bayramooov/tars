@@ -105,6 +105,14 @@ describe('MCP server over Streamable HTTP', () => {
     expect(status).toBe(403);
   });
 
+  it('drops the previous session when a new client connects: a killed claude never says goodbye', async () => {
+    const { server, client } = await setup();
+    const next = new Client({ name: 'respawned', version: '1' });
+    await next.connect(new StreamableHTTPClientTransport(new URL(server.url)));
+    await expect(client.listTools()).rejects.toThrow(/Session not found/);
+    expect((await next.listTools()).tools.length).toBeGreaterThan(0);
+  });
+
   it('stops serving on stop(), and stopping twice is harmless', async () => {
     const t = await setup();
     const url = t.server.url;

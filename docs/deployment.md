@@ -227,10 +227,11 @@ If you and the bot edit the same memory file, add `memories/**/*.md merge=union`
 
 - `tars.db` — the SQLite database
 - `session_id` — the Claude Code session to resume
-- `attachments/`, `renders/` — files received and images produced
+- `attachments/`, `renders/` — files received and images produced (a render untouched for 30 days is deleted at boot)
 - `prompt_backups/` — `project.md` before each of the bot's edits
 - `logs/` — `tars.log`, JSON lines, rotated daily, 7 days kept
-- `cc_logs/` — the raw Claude Code output, one pair of files per session, never pruned (backlog P8)
+- `cc_logs/` — the raw Claude Code output, one pair of files per session; a file untouched for 30 days is deleted at boot
+- `mcp.json` — the `--mcp-config` file Claude Code starts with, rewritten at every boot (it holds plugin credentials)
 
 Moving to another server, copy nothing from `data/`: Claude Code won't know the old session id (tars starts a fresh one and tells you), and the history rebuilds from new messages.
 

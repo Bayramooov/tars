@@ -7,7 +7,8 @@ const BOL = String.raw`(?<![^\n])`;
 const EOL = String.raw`(?![^\n])`;
 
 const FENCE = '```';
-const CODE_BLOCK = new RegExp(String.raw`${FENCE}(${WORD}+)?\n?([\s\S]*?)${FENCE}`, 'gu');
+// A language tag only counts when a newline follows it: ```npm install x``` is all code.
+const CODE_BLOCK = new RegExp(String.raw`${FENCE}(?:(${WORD}+)?\n)?([\s\S]*?)${FENCE}`, 'gu');
 const INLINE_CODE = /`([^`]+)`/g;
 const HR = new RegExp(String.raw`${BOL}[ \t]*(?:-{3,}|={3,}|\*{3,})[ \t]*${EOL}`, 'g');
 const LIST = new RegExp(String.raw`${BOL}([ \t]*)[-*+] `, 'g');

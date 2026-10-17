@@ -35,7 +35,8 @@ export class FakeTelegram {
     allows_users_to_create_topics: false,
   } as UserFromGetMe;
   private readonly queue: Update[] = [];
-  private readonly failures = new Map<string, { error_code: number; description: string }[]>();
+  /** Per method, the next calls' outcomes: a failure, or undefined to let that call through. */
+  private readonly failures = new Map<string, ({ error_code: number; description: string } | undefined)[]>();
   private readonly results = new Map<string, unknown[]>();
   private updateId = 1;
   private messageId = 5000;
@@ -51,9 +52,9 @@ export class FakeTelegram {
     return { ok: true, result: this.answer(method, payload) } as never;
   };
 
-  /** Make the next `method` call fail like the real API would. */
-  fail(method: string, error_code: number, description: string): void {
-    this.failures.set(method, [...(this.failures.get(method) ?? []), { error_code, description }]);
+  /** Make the next `method` call — or the one after `after` successful calls — fail like the real API would. */
+  fail(method: string, error_code: number, description: string, after = 0): void {
+    this.failures.set(method, [...(this.failures.get(method) ?? []), ...Array<undefined>(after).fill(undefined), { error_code, description }]);
   }
 
   /** Answer the next `method` call with `result` instead of the default answer. */

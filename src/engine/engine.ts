@@ -101,7 +101,7 @@ export class Engine {
     if (hooks.onSuccess || hooks.onFailure) this.pendingHooks.push(hooks);
     if (this.processing) return this.injectPending();
     clearTimeout(this.debounce);
-    this.debounce = setTimeout(() => void this.kick(), this.o.debounceMs);
+    this.debounce = setTimeout(() => this.kickInBackground(), this.o.debounceMs);
   }
 
   /** The worker finished (or aborted) a turn. Results are handled one at a time, in order. */
@@ -135,6 +135,13 @@ export class Engine {
     // A claimed reminder stays `processing` in the DB; the next boot re-arms it.
     this.pendingHooks = [];
     this.turnHooks = [];
+  }
+
+  /** A turn nobody awaits: only the worker's shutdown may cut its opening send short, and that is expected. */
+  private kickInBackground(): void {
+    this.kick().catch((err: unknown) => {
+      if (!this.stopped) this.log.error('engine failed to start a turn', { err });
+    });
   }
 
   private async kick(): Promise<void> {
@@ -172,9 +179,8 @@ export class Engine {
     this.turn.awaitingReply ||= humans(batch).length > 0;
     if (!(await this.o.worker.inject(formatBatch(batch, this.history)))) return this.requeue(batch, hooks);
     this.markConsumed(batch);
-    const chats = new Set(batch.map((m) => m.chatId));
-    this.logHotPath('inject', batch, chats);
-    await this.o.typing.rearm(chats);
+    // The dispatcher already showed typing for the human messages; reminders get none.
+    this.logHotPath('inject', batch, new Set(batch.map((m) => m.chatId)));
   }
 
   /** The turn ended before an injection landed: keep the batch for the next turn. */
@@ -182,7 +188,7 @@ export class Engine {
     this.pending.unshift(...batch);
     this.turnHooks = this.turnHooks.filter((h) => !hooks.includes(h));
     this.pendingHooks.unshift(...hooks);
-    if (!this.processing) void this.kick();
+    if (!this.processing) this.kickInBackground();
   }
 
   private takePending(): ChatMessage[] {

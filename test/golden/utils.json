@@ -158,6 +158,10 @@
   ],
   "markdown_to_telegram_html": [
     {
+      "in": "```npm install tars```",
+      "out": "<pre>npm install tars</pre>"
+    },
+    {
       "in": "",
       "out": ""
     },
@@ -434,6 +438,26 @@
     }
   ],
   "scrub": [
+    {
+      "in": "Authorization: Basic dXNlcjpwYXNzd29yZDEyMzQ=",
+      "out": "[REDACTED]",
+      "contains": true
+    },
+    {
+      "in": "{\"Authorization\": \"Bearer abcdefghijklmnopqrstuvwxyz0123\"}",
+      "out": "{\"[REDACTED]}",
+      "contains": true
+    },
+    {
+      "in": "{'api_key': 'abcdefghijklmnopqrstuv'}",
+      "out": "{'[REDACTED]}",
+      "contains": true
+    },
+    {
+      "in": "token github_pat_11ABCDEFG0123456789_abcdefghijklmnopqrstuvwxyz0123456789 end",
+      "out": "token [REDACTED] end",
+      "contains": true
+    },
     {
       "in": "my key is sk-abcdefghijklmnopqrstuvwxyz123456 ok",
       "out": "my key is [REDACTED] ok",

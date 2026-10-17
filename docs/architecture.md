@@ -90,7 +90,7 @@ What `outcome.ts` does with an ending:
 SQLite at `data/tars.db` (better-sqlite3); the schema lives in `src/db/migrations/` — change it with a new numbered file, never by editing one that has shipped.
 
 - `messages` — every message in and out. Inbound rows are written before Claude sees them: `consumed` marks the ones handed to Claude (the rest replay at boot), `processed` the ones whose turn finished cleanly — only those enter a restored-context recap, so a poisonous message can't come back. `reactions` is JSON, `{"👍": [user_id, …]}`, filled from both directions; Telegram only sends user reactions in DMs and in groups where the bot is an admin.
-- `users`, `reminders`, `tool_calls` (one row per tool call), `rate_limits`, and `unauthorized_messages` (blocked messages, kept 30 days).
+- `users`, `reminders`, `tool_calls` (one row per tool call, kept 30 days), `rate_limits`, and `unauthorized_messages` (blocked messages, kept 30 days).
 
 ## Memory, skills and self-editing
 

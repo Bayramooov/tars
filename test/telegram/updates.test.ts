@@ -33,6 +33,11 @@ describe('update → ChatMessage', () => {
     expect([...(cm?.inputFlags ?? [])]).toEqual(['zero_width_stripped']);
   });
 
+  it('redacts an obfuscated key in the raw update too', () => {
+    const cm = map(message({ text: `my key s\u{200B}k-${'a'.repeat(24)}` }));
+    expect(cm?.rawUpdateJson).not.toContain('a'.repeat(24));
+  });
+
   it('stores the raw update as JSON with secrets scrubbed per value', () => {
     const cm = map(message({ text: 'postgres://u:hunter2@db/x tail' }));
     const raw = JSON.parse(cm?.rawUpdateJson ?? '') as { message: { text: string } };

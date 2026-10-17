@@ -7,8 +7,8 @@ import { resolveUnderRoot } from './paths.ts';
 /**
  * `data/renders/`: the PNGs render_html/render_latex draw and the browser's
  * screenshots and downloads, flat, named `{UTC stamp}-{slug}-{6 hex}.png`.
- * Tools return the bare name; telegram_send_photo resolves it back. Nothing
- * here deletes: cleanup is the operator's job.
+ * Tools return the bare name; telegram_send_photo resolves it back. Boot
+ * deletes renders untouched for 30 days.
  */
 export class RenderStore {
   /** Canonical root, so containment checks see through symlinked parents. */

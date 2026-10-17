@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { chunkText } from '../../text/chunk.ts';
+import { chunkMarkdown } from '../../text/chunk.ts';
 import { markdownToTelegramHtml } from '../../text/markdown.ts';
 import { defineTool, type Tool, type ToolResult } from '../../mcp/tool.ts';
 import type { ToolContext } from '../context.ts';
@@ -20,7 +20,7 @@ export function sendMessageTool(ctx: SendContext): Tool {
       reply_to_message_id: z.int().nullable().default(null).describe('Optional. Make this a quote-reply to the given message id. When a reply target is required, prefer telegram_reply_to_message.'),
       message_thread_id: z.int().nullable().default(null).describe('Optional. Forum-supergroup topic id. REQUIRED when the inbound <msg> carries a topic="..." attribute — copy that value here, otherwise the message lands in the General topic.'),
     }),
-    run: (args) => deliver(ctx, { chatId: args.chat_id, text: args.text, replyTo: args.reply_to_message_id, topic: args.message_thread_id }),
+    run: (args) => deliver(ctx, { chatId: args.chat_id, text: args.text, replyTo: args.reply_to_message_id, topic: args.message_thread_id ?? undefined }),
   });
 }
 
@@ -34,7 +34,7 @@ export function replyToMessageTool(ctx: SendContext): Tool {
       reply_to_message_id: z.int().describe('Numeric id of the message to quote-reply within chat_id.'),
       text: z.string().describe('Reply body. Markdown by default — auto-converted to Telegram HTML.'),
     }),
-    run: (args) => deliver(ctx, { chatId: args.chat_id, text: args.text, replyTo: args.reply_to_message_id, topic: null }),
+    run: (args) => deliver(ctx, { chatId: args.chat_id, text: args.text, replyTo: args.reply_to_message_id, topic: undefined }),
   });
 }
 
@@ -42,31 +42,37 @@ interface Outgoing {
   chatId: number;
   text: string;
   replyTo: number | null;
-  topic: number | null;
+  topic: number | undefined;
 }
 
 /**
  * Send markdown text as Telegram HTML, split at paragraph boundaries into
  * as many messages as needed; only the first threads to `replyTo`, and the
  * rest follow it into its forum topic. Every delivered chunk is recorded —
- * also when a later chunk fails.
+ * also when a later chunk fails, which the model then hears about as an
+ * error result naming what went out, so it resends only the rest.
  */
 async function deliver(ctx: SendContext, out: Outgoing): Promise<ToolResult> {
-  const chunks = chunkText(out.text);
+  const chunks = chunkMarkdown(out.text);
   const ids: number[] = [];
-  let topic = out.topic ?? undefined;
+  let topic = out.topic;
+  const replyParameters = out.replyTo === null ? {} : { reply_parameters: { message_id: out.replyTo } };
   try {
     for (const [i, chunk] of chunks.entries()) {
       const sent = await ctx.api.sendMessage(out.chatId, markdownToTelegramHtml(chunk), {
         parse_mode: 'HTML',
-        ...(i === 0 && out.replyTo !== null ? { reply_parameters: { message_id: out.replyTo } } : {}),
+        ...(i === 0 ? replyParameters : {}),
         message_thread_id: topic,
       });
-      topic ??= sent.is_topic_message ? sent.message_thread_id : undefined;
+      if (sent.is_topic_message) topic = sent.message_thread_id;
       ids.push(sent.message_id);
       ctx.log.info(`hot-path stage=delivered chat=${out.chatId} msg=${sent.message_id} chunk=${i + 1}/${chunks.length}`);
       if (i === 0) ctx.onChatReplied(out.chatId);
     }
+  } catch (err) {
+    if (!ids.length) throw err;
+    const content = `sent ${ids.length} of ${chunks.length} chunks (message_ids=[${ids.join(', ')}]), then failed: ${(err as Error).message}`;
+    return { content, isError: true, data: { message_id: ids[0], message_ids: ids, chat_id: out.chatId } };
   } finally {
     record(ctx, out, chunks, ids);
   }
