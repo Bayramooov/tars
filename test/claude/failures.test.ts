@@ -6,6 +6,8 @@ describe('failure classifier', () => {
   it('recognises model, auth, quota and rate-limit failures, case-insensitively', () => {
     expect(classifyFailure(['There is an issue with the selected model (claude-sonet-4)'])?.kind).toBe('model-access');
     expect(classifyFailure(['Invalid API key · Please run /login'])?.kind).toBe('auth');
+    // Claude Code 2.1.263's wording when the OAuth login lapses.
+    expect(classifyFailure(['Failed to authenticate: OAuth session expired and could not be refreshed'])?.kind).toBe('auth');
     expect(classifyFailure(['Credits exhausted for this org'])?.kind).toBe('quota');
     expect(classifyFailure(['429 Too Many Requests'])?.kind).toBe('rate-limit');
     expect(classifyFailure(['all good', ''])).toBeUndefined();

@@ -127,6 +127,16 @@ describe('ClaudeWorker', () => {
     expect(h.log.text()).toContain('cc subprocess rejected stale session_id=dead-session');
   });
 
+  it('hands a turn written to a stale session over to the fresh one instead of losing it', async () => {
+    vi.stubEnv('FAKE_CLAUDE_STALE', '1');
+    const h = harness({ sessionId: 'dead-session' });
+    await h.worker.start();
+    await h.worker.send(control('stop', 'made it'));
+    expect(await h.nextResult()).toMatchObject({ control: { reason: 'made it' } });
+    const errors = h.log.records.filter((r) => r.level === 'ERROR' && !r.msg.startsWith('mcp server tars did not connect'));
+    expect(errors.map((r) => r.msg)).toEqual([]);
+  });
+
   it('trips the tool-error breaker, keeping the partial text', async () => {
     const h = harness();
     await h.worker.start();
@@ -135,6 +145,20 @@ describe('ClaudeWorker', () => {
     expect(h.log.text()).toContain('cc tool-error circuit breaker tripped (reason=count): 3 errors in');
     await until(() => h.spawns()[1]);
     expect(h.log.text()).toMatch(/cc subprocess exited rc=\S+ on intentional tool-error-limit — respawning/);
+  });
+
+  it('leaves the alert for a turn cut short to the engine: a crash, wedge or breaker trip logs no worker ERROR', async () => {
+    const h = harness({ limits: { livenessTimeoutSeconds: 0.3, livenessPollSeconds: 0.1 } });
+    await h.worker.start();
+    await h.worker.send('#fake crash');
+    await h.nextResult();
+    await h.worker.send('#fake hang');
+    await h.nextResult(2);
+    await h.worker.send(`#fake tool-errors 3\n${control('stop')}`);
+    expect(await h.nextResult(3)).toMatchObject({ abortedReason: 'tool-error-limit' });
+    // The harness's MCP server is unreachable on purpose; that error is not about the turn.
+    const errors = h.log.records.filter((r) => r.level === 'ERROR' && !r.msg.startsWith('mcp server tars did not connect'));
+    expect(errors.map((r) => r.msg)).toEqual([]);
   });
 
   it('kills a wedged turn on liveness timeout', async () => {

@@ -42,6 +42,8 @@ const emit = (event: Record<string, unknown>) => process.stdout.write(`${JSON.st
 
 record({ kind: 'argv', argv, probe: process.env.FAKE_CLAUDE_PROBE });
 if (resumeId && process.env.FAKE_CLAUDE_STALE) {
+  // Like the real CLI, it takes a moment to reject the id, never reading the turn written to it meanwhile.
+  await sleep(300);
   process.stderr.write(`No conversation found with session ID: ${resumeId}\n`);
   process.exit(1);
 }

@@ -17,7 +17,7 @@ import { chatTitle, commandOf, toChatMessage } from './updates.ts';
 /** What the dispatcher hands messages to. */
 export interface EnginePort {
   submit(msg: ChatMessage): Promise<void>;
-  primeTyping(chatId: number): void;
+  primeTyping(chatId: number, topic: number | undefined): void;
 }
 
 /** Handles a recognised command; true when it was one of ours (and so consumed for everyone). */
@@ -81,7 +81,7 @@ export class Dispatcher {
     await this.o.attachments(msg, cm);
     insertMessage(this.o.db, cm);
     upsertUser(this.o.db, cm);
-    this.o.engine.primeTyping(cm.chatId);
+    this.o.engine.primeTyping(cm.chatId, cm.messageThreadId);
     this.log.info(`hot-path stage=submit chat=${cm.chatId} msg=${cm.messageId} t_ms=${Math.trunc(performance.now() - receivedAt)}`);
     await this.o.engine.submit(cm);
   }

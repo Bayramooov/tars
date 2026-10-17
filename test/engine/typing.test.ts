@@ -15,8 +15,8 @@ function setup() {
 describe('typing indicator', () => {
   it('shows typing at once on arrival and refreshes every 5 s', async () => {
     const { typing, calls } = setup();
-    typing.prime(1);
-    typing.prime(1);
+    typing.prime(1, undefined);
+    typing.prime(1, undefined);
     expect(calls).toEqual([1]);
     await vi.advanceTimersByTimeAsync(5000);
     expect(calls).toEqual([1, 1]);
@@ -46,6 +46,16 @@ describe('typing indicator', () => {
     typing.replied(2);
     await vi.advanceTimersByTimeAsync(20_000);
     expect(calls).toEqual([1, 2, 2, 2]);
+  });
+
+  it('shows typing in the forum topic the waiting message came from', async () => {
+    vi.useFakeTimers();
+    const calls: [number, number | undefined][] = [];
+    const typing = new TypingIndicator((chatId, topic) => Promise.resolve(void calls.push([chatId, topic])), memoryLogger());
+    typing.prime(-100, 7);
+    await vi.advanceTimersByTimeAsync(5000);
+    typing.prime(1, undefined);
+    expect(calls).toEqual([[-100, 7], [-100, 7], [1, undefined]]);
   });
 
   it('drops every chat that replied within the first second', async () => {

@@ -35,6 +35,20 @@ describe('raw wire capture', () => {
     expect(readFileSync(join(dir, 's1.stream.jsonl'), 'utf8')).toBe('one\ntwo\n');
   });
 
+  it('leaves no empty files behind: a child that never spoke, or a quiet stderr', () => {
+    const dir = tempDir();
+    const capture = new WireCapture(dir, memoryLogger());
+    capture.open(undefined);
+    capture.close();
+    expect(readdirSync(dir)).toEqual([]);
+    capture.open(undefined);
+    capture.writeStream('{"type":"system","subtype":"init","session_id":"s3"}');
+    capture.sessionKnown('s3');
+    capture.writeStream('{"type":"result"}');
+    capture.close();
+    expect(readdirSync(dir)).toEqual(['s3.stream.jsonl']);
+  });
+
   // no captured line is dropped when the target exists
   it('appends the pending capture when the session file already exists', () => {
     const dir = tempDir();

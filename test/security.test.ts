@@ -60,6 +60,12 @@ describe('security invariant 1: a locked-down claude argv', () => {
     expect(argv).toContain('--strict-mcp-config');
   });
 
+  it("never loads the host's Claude Code settings, hooks, plugins, CLAUDE.md or auto-memory", () => {
+    const argv = buildArgv(spec({}));
+    expect(argv[argv.indexOf('--setting-sources') + 1]).toBe('');
+    expect(JSON.parse(argv[argv.indexOf('--settings') + 1] ?? '{}')).toEqual({ autoMemoryEnabled: false });
+  });
+
   it('refuses to build an argv carrying the forbidden flag', () => {
     expect(() => buildArgv(spec({ model: FORBIDDEN_FLAG }))).toThrow(`refusing to build argv containing '${FORBIDDEN_FLAG}'`);
   });

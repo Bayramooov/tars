@@ -55,7 +55,12 @@ export class ClaudeWorker {
   private childStderr: string[] = [];
   private reportedServers = new Set<string>();
   private turn: Turn | undefined;
-  private awaitingInit = false;
+  /**
+   * The current turn's first message until Claude Code starts the turn (its
+   * `system/init`): events before that belong to an earlier turn, and a stale
+   * session that never started it hands it to the fresh one.
+   */
+  private opening: string | undefined;
   private lastEventAt = performance.now();
   private intentional: AbortReason | undefined;
   private crashTimes: number[] = [];
@@ -85,7 +90,7 @@ export class ClaudeWorker {
   async send(text: string): Promise<void> {
     const child = await this.whenReady();
     this.turn = new Turn(this.log, this.o.transcript);
-    this.awaitingInit = true;
+    this.opening = text;
     this.lastEventAt = performance.now();
     this.breaker.reset();
     this.o.transcript.ccUser(text);
@@ -134,7 +139,11 @@ export class ClaudeWorker {
     this.intentional = undefined;
     const child = spawnChild(argv, (line) => this.onStdout(line), (line) => this.onStderr(line));
     this.child = child;
-    child.spawned.then(() => this.child === child && this.ready.resolve(child), () => {});
+    child.spawned.then(() => {
+      if (this.child !== child) return;
+      this.ready.resolve(child);
+      if (this.turn && this.opening !== undefined) void this.write(child, this.opening);
+    }, () => {});
     child.exited.then((exit) => this.onExit(child, exit)).catch((err: unknown) => this.log.error('claude supervisor failed', { err }));
     return child;
   }
@@ -163,14 +172,14 @@ export class ClaudeWorker {
     const turn = this.turn;
     // No turn collecting (a dying session's stray events), or this turn's init
     // hasn't arrived yet (the tail of a prior Claude Code turn): drop.
-    if (!turn || this.awaitingInit) return;
+    if (!turn || this.opening !== undefined) return;
     if (event.type === 'assistant') turn.addAssistant(event);
     else if (event.type === 'user') this.onToolResults(turn.toolResults(event));
     else if (event.type === 'result') this.emit(turn.finish(event));
   }
 
   private onInit(event: Record<string, unknown>): void {
-    this.awaitingInit = false;
+    this.opening = undefined;
     if (typeof event.session_id === 'string') this.learnSession(event.session_id);
     for (const { name, status } of failedMcpServers(event)) {
       if (this.reportedServers.has(name)) continue;
@@ -220,15 +229,16 @@ export class ClaudeWorker {
     this.abortTurn('liveness-wedge', why);
   }
 
+  /** Cut the running turn short; the engine alerts the owner about it, so this is only a warning. */
   private abortTurn(reason: AbortReason, why: string): void {
-    this.log.error(why);
+    this.log.warn(why);
     if (this.turn) this.emit(this.turn.abort(reason));
     void this.killChild(reason);
   }
 
   private emit(result: TurnResult): void {
     this.turn = undefined;
-    this.awaitingInit = false;
+    this.opening = undefined;
     this.o.onResult(result);
   }
 
@@ -252,11 +262,20 @@ export class ClaudeWorker {
       this.log.info(`cc subprocess exited rc=${rc} on intentional ${intentional} — respawning`);
       return this.respawnAfter(this.o.config.crashBackoffBase);
     }
+    return this.onCrash(exit, rc);
+  }
+
+  /** The child died on its own: drop a stale session (its unstarted turn moves on), or abort the turn and respawn with backoff. */
+  private async onCrash(exit: ChildExit, rc: number | string): Promise<void> {
     if (exit.error) this.log.error(`claude could not be started: ${exit.error.message}`);
-    if (this.turn) this.emit(this.turn.abort('crash'));
     const stale = this.resumed !== undefined && this.childStderr.some((line) => STALE_SESSION_PATTERNS.some((p) => line.includes(p)));
     if (stale) return this.recoverStale(this.resumed as string);
-    this.log.error(`cc subprocess exited rc=${rc}; recent stderr=${JSON.stringify(this.childStderr.slice(-5))}`);
+    const crashedTurn = this.turn;
+    if (crashedTurn) this.emit(crashedTurn.abort('crash'));
+    const exited = `cc subprocess exited rc=${rc}; recent stderr=${JSON.stringify(this.childStderr.slice(-5))}`;
+    // The engine alerts the owner about a crashed turn; an idle crash is the worker's to report.
+    if (crashedTurn) this.log.warn(exited);
+    else this.log.error(exited);
     return this.recoverCrash();
   }
 
@@ -276,7 +295,7 @@ export class ClaudeWorker {
     if (this.crashTimes.length >= crashLimit) return this.o.onGiveUp(this.crashTimes.length);
     const attempt = this.crashTimes.length;
     const backoff = Math.min(crashBackoffCap, crashBackoffBase * 2 ** (attempt - 1));
-    this.log.error(`respawning cc in ${backoff.toFixed(1)}s (attempt ${attempt})`);
+    this.log.warn(`respawning cc in ${backoff.toFixed(1)}s (attempt ${attempt})`);
     return this.respawnAfter(backoff);
   }
 

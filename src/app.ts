@@ -16,7 +16,6 @@ import { takeUnconsumedInbound } from './db/messages.ts';
 import { insertToolCall, pruneToolCalls } from './db/toolcalls.ts';
 import { Engine } from './engine/engine.ts';
 import { TypingIndicator } from './engine/typing.ts';
-import { acquireInstanceLock } from './lock.ts';
 import type { Logger, LogSink } from './log/logger.ts';
 import { OwnerNotifier } from './log/owner.ts';
 import { Transcript } from './log/transcript.ts';
@@ -90,7 +89,6 @@ export class App {
   private readonly transcript: Transcript;
   private readonly chatTitles = new Map<number, string>();
   private lastToolActivity = performance.now();
-  private releaseLock: (() => void) | undefined;
   private running: Partial<Running> = {};
   private ownerAlerts: OwnerNotifier | undefined;
 
@@ -167,7 +165,6 @@ export class App {
       () => browserSession?.close(),
       () => browser?.close(),
       () => db?.close(),
-      () => this.releaseLock?.(),
     ];
     for (const step of steps) {
       try {
@@ -190,7 +187,6 @@ export class App {
     for (const dir of dirs) mkdirSync(dir, { recursive: true });
     pruneOldFiles(c.ccLogsDir);
     pruneOldFiles(c.rendersDir);
-    this.releaseLock = acquireInstanceLock(c.dataDir);
     bootstrapAccess(c.accessPath, this.log);
   }
 
@@ -255,7 +251,10 @@ export class App {
 
   private async startEngine(db: Db, bot: Bot, worker: ClaudeWorker): Promise<Engine> {
     const log = this.log.child('engine');
-    const typing = new TypingIndicator((chatId) => quietly(bot.api.sendChatAction(chatId, 'typing'), this.log, `send_chat_action failed for chat ${chatId}`), log);
+    const typing = new TypingIndicator(
+      (chatId, topic) => quietly(bot.api.sendChatAction(chatId, 'typing', { message_thread_id: topic }), this.log, `send_chat_action failed for chat ${chatId}`),
+      log,
+    );
     const notify = (chatId: number, text: string, replyTo?: number) =>
       quietly(bot.api.sendMessage(chatId, text, replyTo === undefined ? {} : { reply_parameters: { message_id: replyTo } }), this.log, `error notify failed for chat ${chatId}`);
     const engine = new Engine({ worker, db, debounceMs: this.config.debounceMs, typing, notify, log });

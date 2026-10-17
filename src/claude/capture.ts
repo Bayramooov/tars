@@ -1,4 +1,4 @@
-import { appendFileSync, closeSync, existsSync, mkdirSync, openSync, readFileSync, renameSync, unlinkSync, writeSync } from 'node:fs';
+import { appendFileSync, closeSync, existsSync, mkdirSync, openSync, readFileSync, renameSync, statSync, unlinkSync, writeSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { Logger } from '../log/logger.ts';
@@ -60,13 +60,20 @@ export class WireCapture {
     } catch (err) {
       this.log.error('failed to rename raw cc capture files; keeping capture alive', { err });
     }
-    const reopen = (i: number) => this.openSink(existsSync(join(this.dir, named[i] ?? '')) ? (named[i] ?? '') : (pending[i] ?? ''));
+    // A pending file still there means its rename failed; otherwise write on under the session's name.
+    const reopen = (i: number) => this.openSink(existsSync(join(this.dir, pending[i] ?? '')) ? (pending[i] ?? '') : (named[i] ?? ''));
     this.stream = reopen(0);
     this.stderr = reopen(1);
   }
 
+  /** Close both files; one still empty (a child that never spoke, a quiet stderr) is removed. */
   close(): void {
-    for (const sink of [this.stream, this.stderr]) if (sink) closeSync(sink.fd);
+    for (const sink of [this.stream, this.stderr]) {
+      if (!sink) continue;
+      closeSync(sink.fd);
+      const path = join(this.dir, sink.name);
+      if (statSync(path, { throwIfNoEntry: false })?.size === 0) unlinkSync(path);
+    }
     this.stream = undefined;
     this.stderr = undefined;
   }

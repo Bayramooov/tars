@@ -99,12 +99,21 @@ describe('stream-json helpers', () => {
     expect(userLine('Ўз "hi"')).toBe('{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Ўз \\"hi\\""}]}}\n');
   });
 
-  it('relays top-level errors; retries and failed results (the engine alerts on those) as warnings', () => {
+  it('relays top-level errors; retries and failed turns (the engine alerts on those) as warnings', () => {
     const log = memoryLogger();
     relayError({ type: 'result', subtype: 'success', is_error: true, api_error_status: 529 }, log);
     relayError({ type: 'system', subtype: 'api_retry', error: 'overloaded' }, log);
+    relayError({ type: 'assistant', error: 'authentication_failed' }, log);
     relayError({ type: 'assistant' }, log);
-    expect(log.text()).toBe('WARNING cc reported error in result/success event: is_error=true, api_error_status=529\nWARNING cc reported error in system/api_retry event: error=overloaded');
+    relayError({ type: 'system', subtype: 'init', error: 'boom' }, log);
+    expect(log.text()).toBe(
+      [
+        'WARNING cc reported error in result/success event: is_error=true, api_error_status=529',
+        'WARNING cc reported error in system/api_retry event: error=overloaded',
+        'WARNING cc reported error in assistant/- event: error=authentication_failed',
+        'ERROR cc reported error in system/init event: error=boom',
+      ].join('\n'),
+    );
   });
 
   it('lists MCP servers that did not connect', () => {

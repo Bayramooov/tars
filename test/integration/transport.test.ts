@@ -62,6 +62,15 @@ describe('Telegram transport', () => {
     expect(t.telegram.calls.find((c) => c.method === 'sendChatAction')?.payload).toEqual({ chat_id: OWNER.id, action: 'typing' });
   });
 
+  it('shows typing inside the forum topic the message came from', async () => {
+    const t = testApp({}, { policy: 'allowlist', allowed_users: [], allowed_chats: [-1001] });
+    running.push(t);
+    await t.app.start();
+    t.telegram.message({ id: -1001, title: 'forum', is_forum: true }, OWNER, 'hi', { is_topic_message: true, message_thread_id: 7 });
+    const typing = await t.telegram.waitFor('sendChatAction', (p) => p.chat_id === -1001, 15_000);
+    expect(typing.payload).toEqual({ chat_id: -1001, action: 'typing', message_thread_id: 7 });
+  });
+
   it('delivers rescued text as plain text threaded to the message; a failed send is only a warning', async () => {
     const t = await started();
     const id = t.telegram.message({ id: OWNER.id }, OWNER, '#fake text forgotten *answer*\n#fake control {"action":"stop","reason":"x"}');

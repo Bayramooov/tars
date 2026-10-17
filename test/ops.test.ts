@@ -32,7 +32,6 @@ describe('operations contract', () => {
   it('builds an image with tini as PID 1, the Claude Code CLI, Chromium and the app at /app', () => {
     const dockerfile = read('Dockerfile');
     for (const line of [
-      'RUN npm install -g @anthropic-ai/claude-code',
       'WORKDIR /app',
       'RUN npx playwright install --with-deps chromium',
       'COPY src/ src/',
@@ -45,6 +44,9 @@ describe('operations contract', () => {
       'CMD ["node", "src/main.ts"]',
     ]) expect(dockerfile).toContain(line);
     expect(dockerfile).toMatch(/^RUN npm ci --omit=dev$/m);
+    // A rebuild must not silently change the Claude Code the bot runs on.
+    expect(dockerfile).toMatch(/^ARG CLAUDE_CODE_VERSION=\d+\.\d+\.\d+$/m);
+    expect(dockerfile).toContain('RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}');
   });
 
   it('keeps secrets and runtime data out of the image', () => {

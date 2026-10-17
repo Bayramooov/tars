@@ -10,11 +10,14 @@ export function failedMcpServers(event: Record<string, unknown>): { name: string
   return servers.filter((s) => s.status !== 'connected').map((s) => ({ name: asText(s.name ?? '?'), status: asText(s.status) }));
 }
 
+/** Events whose errors are warnings: their failed turn gets the engine's own alert, or they heal themselves. */
+const WARN_ONLY = ['result/', 'assistant/', 'system/api_retry'];
+
 /**
  * Log an error Claude Code reports at the top level of any non-tool event.
  * `system/api_retry` is its own transparent retry of an overloaded API — it
- * heals itself — and the engine raises its own alert for a failed `result`,
- * so both are warnings, not owner-alerting errors.
+ * heals itself — and a failed turn (an `assistant` error, then its `result`)
+ * gets the engine's own alert, so these are warnings, not owner-alerting errors.
  */
 export function relayError(event: Record<string, unknown>, log: Logger): void {
   const bits = [
@@ -23,8 +26,8 @@ export function relayError(event: Record<string, unknown>, log: Logger): void {
     event.error ? `error=${asText(event.error)}` : '',
   ].filter(Boolean);
   if (!bits.length) return;
-  const subtype = event.subtype ? asText(event.subtype) : '-';
-  const message = `cc reported error in ${asText(event.type)}/${subtype} event: ${bits.join(', ')}`;
-  if (event.type === 'result' || (event.type === 'system' && event.subtype === 'api_retry')) log.warn(message);
+  const where = `${asText(event.type)}/${event.subtype ? asText(event.subtype) : '-'}`;
+  const message = `cc reported error in ${where} event: ${bits.join(', ')}`;
+  if (WARN_ONLY.some((prefix) => where.startsWith(prefix))) log.warn(message);
   else log.error(message);
 }

@@ -17,8 +17,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends tini ca-certificates curl git && \
     rm -rf /var/lib/apt/lists/*
 
-# The Claude Code CLI (also brings npx for npx-launched MCP plugins).
-RUN npm install -g @anthropic-ai/claude-code
+# The Claude Code CLI (also brings npx for npx-launched MCP plugins), pinned so a
+# rebuild never silently changes it: bump here or with --build-arg.
+ARG CLAUDE_CODE_VERSION=2.1.301
+RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
 
 WORKDIR /app
 COPY --from=deps /app/node_modules node_modules

@@ -110,8 +110,8 @@ export class Engine {
     this.results = this.results.then(() => this.handle(result)).catch((err: unknown) => this.log.error('engine failed to handle a turn result', { err }));
   }
 
-  primeTyping(chatId: number): void {
-    this.o.typing.prime(chatId);
+  primeTyping(chatId: number, topic: number | undefined): void {
+    this.o.typing.prime(chatId, topic);
   }
 
   notifyChatReplied(chatId: number): void {

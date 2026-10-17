@@ -17,7 +17,7 @@ const PATTERNS: readonly { kind: FailureClass['kind']; keywords: readonly string
   },
   {
     kind: 'auth',
-    keywords: ['unauthorized', 'authentication failed', 'invalid api key', 'invalid_api_key', 'subscription', 'please log in', 'not logged in', 'expired credentials', 'expired token'],
+    keywords: ['unauthorized', 'authentication failed', 'failed to authenticate', 'authentication_failed', 'invalid api key', 'invalid_api_key', 'subscription', 'please log in', 'not logged in', 'expired credentials', 'expired token'],
     userMessage:
       '⚠️ Claude authentication failed — the token may be missing or revoked. ' +
       'The operator needs to regenerate it with `claude setup-token` and update `CLAUDE_CODE_OAUTH_TOKEN` in `.env`.',

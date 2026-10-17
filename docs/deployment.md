@@ -62,6 +62,7 @@ services:
 - **Clone with the submodule.** A plain clone leaves `framework/` empty and the build fails: use `git clone --recurse-submodules`, or `git submodule update --init` afterwards.
 - **`prompts/` and `skills/` replace the image's copies, they don't merge.** Re-copy `system.md`, `subagents.md` and the built-in skills after updating the framework.
 - **Updating the framework:** `git submodule update --remote framework && git add framework && git commit -m "bump tars"`, then rebuild.
+- **Claude Code is pinned** (`CLAUDE_CODE_VERSION` in the Dockerfile), so a rebuild never changes it behind your back. To move to a newer one without waiting for a framework bump: `docker compose build --build-arg CLAUDE_CODE_VERSION=<version>`.
 
 ### Extra packages
 

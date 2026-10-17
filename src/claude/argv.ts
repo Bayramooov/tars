@@ -60,6 +60,10 @@ export function buildArgv(spec: SpawnSpec): string[] {
     '--system-prompt', composeSystemPrompt(spec),
     '--mcp-config', spec.mcpConfigPath,
     '--strict-mcp-config',
+    // The host's Claude Code stays out of the bot: no settings sources (hooks, plugins, CLAUDE.md) and
+    // no auto-memory (the project's MEMORY.md); tars has its own memory.
+    '--setting-sources', '',
+    '--settings', JSON.stringify({ autoMemoryEnabled: false }),
     '--tools', builtinTools(spec).join(','),
     '--allowedTools', allowed.join(','),
     '--disallowedTools', disallowed.join(','),

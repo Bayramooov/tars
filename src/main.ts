@@ -1,8 +1,9 @@
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { App } from './app.ts';
 import { loadConfig, PROJECT_ROOT } from './config.ts';
+import { acquireInstanceLock } from './lock.ts';
 import { setupLogging } from './log/setup.ts';
 
 // `.env` fills in what the environment doesn't already set (Docker passes it via env_file).
@@ -10,6 +11,9 @@ const envFile = join(PROJECT_ROOT, '.env');
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 
 const config = loadConfig(process.env);
+// The lock guards the whole data directory, logs included: a refused second instance writes nothing there.
+mkdirSync(config.dataDir, { recursive: true });
+const releaseLock = acquireInstanceLock(config.dataDir);
 const logging = setupLogging(config);
 const log = logging.log;
 
@@ -21,6 +25,7 @@ async function shutdown(code: number): Promise<void> {
   setTimeout(() => process.exit(code), 12_000).unref();
   await app.stop().catch((err: unknown) => log.error('shutdown failed', { err }));
   logging.close();
+  releaseLock();
   process.exit(code);
 }
 

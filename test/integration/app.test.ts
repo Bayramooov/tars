@@ -74,7 +74,7 @@ describe('app lifecycle', () => {
     expect(t.log.text()).toContain('⚠️ Shutting down — Claude Code failed 2 times. The operator needs to intervene.');
     const crash = t.log.records.find((r) => r.msg === 'cc subprocess exited rc=1; recent stderr=[]');
     expect(crash?.name).toBe('tars.worker');
-    expect(t.log.text()).toContain('ERROR respawning cc in 0.0s (attempt 1)');
+    expect(t.log.text()).toContain('WARNING respawning cc in 0.0s (attempt 1)');
     await t.telegram.waitFor('sendMessage', (p) => String(p.text).startsWith('⚠️ ERROR — tars.worker\ncc subprocess exited rc=1'), 15_000);
   });
 
@@ -88,13 +88,6 @@ describe('app lifecycle', () => {
     expect(dm.payload.text).toContain(`• message 5001 from @owner (id ${OWNER.id})`);
   });
 
-  it('refuses to run twice on one data directory', async () => {
-    const first = make();
-    await first.app.start();
-    const second = testApp({ TARS_DATA_DIR: first.config.dataDir });
-    await expect(second.app.start()).rejects.toThrow(/another tars instance is already running on .* \(data\/\.instance\.lock is held\)/);
-  });
-
   it('saves the session id and shuts down cleanly', async () => {
     const t = make();
     await t.app.start();
@@ -104,7 +97,6 @@ describe('app lifecycle', () => {
     await t.app.stop();
     expect(readFileSync(t.config.sessionIdPath, 'utf8')).toMatch(/^[0-9a-f-]{36}$/);
     expect(t.log.text()).toContain('clean shutdown complete');
-    expect(existsSync(join(t.config.dataDir, '.instance.lock'))).toBe(true);
   });
 
   it('boots in order — disk, access, database, plugins, tools, MCP server, Claude Code, Telegram — then says it is live', async () => {

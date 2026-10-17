@@ -7,29 +7,33 @@ const MIN_VISIBLE_MS = 1000;
 
 /**
  * The "typing…" indicator for every chat waiting on the current turn: shown
- * as soon as a message arrives, refreshed every 5 s, and dropped per chat
- * the moment that chat's reply is delivered (or when the turn ends).
+ * as soon as a message arrives — in a forum, inside that message's topic —
+ * refreshed every 5 s, and dropped per chat the moment that chat's reply is
+ * delivered (or when the turn ends).
  */
 export class TypingIndicator {
   private chats = new Set<number>();
   private startedAt = 0;
   private timer: NodeJS.Timeout | undefined;
   private readonly deferred = new Map<number, NodeJS.Timeout>();
-  private readonly send: (chatId: number) => Promise<void>;
+  /** Per chat, the forum topic of its latest waiting message. */
+  private readonly topics = new Map<number, number | undefined>();
+  private readonly send: (chatId: number, topic: number | undefined) => Promise<void>;
   private readonly log: Logger;
 
   /** `send` shows the indicator once and never throws. */
-  constructor(send: (chatId: number) => Promise<void>, log: Logger) {
+  constructor(send: (chatId: number, topic: number | undefined) => Promise<void>, log: Logger) {
     this.send = send;
     this.log = log;
   }
 
   /** A message just arrived: show typing right away, before debounce and formatting. */
-  prime(chatId: number): void {
+  prime(chatId: number, topic: number | undefined): void {
+    this.topics.set(chatId, topic);
     if (!this.chats.size) this.startedAt = performance.now();
     if (!this.chats.has(chatId)) {
       this.chats.add(chatId);
-      void this.send(chatId);
+      void this.show(chatId);
     }
     this.ensureLoop();
   }
@@ -42,13 +46,13 @@ export class TypingIndicator {
     if (this.timer) {
       const fresh = [...chats].filter((c) => !this.chats.has(c));
       fresh.forEach((c) => this.chats.add(c));
-      await Promise.all(fresh.map((c) => this.send(c)));
+      await Promise.all(fresh.map((c) => this.show(c)));
       return;
     }
     this.chats = new Set(chats);
     this.startedAt = performance.now();
     for (const chatId of chats) {
-      await this.send(chatId);
+      await this.show(chatId);
       this.log.info(`typing fired for chat ${chatId}`);
     }
     this.ensureLoop();
@@ -85,6 +89,10 @@ export class TypingIndicator {
   }
 
   private refresh(): void {
-    for (const chatId of this.chats) void this.send(chatId);
+    for (const chatId of this.chats) void this.show(chatId);
+  }
+
+  private show(chatId: number): Promise<void> {
+    return this.send(chatId, this.topics.get(chatId));
   }
 }
