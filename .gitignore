@@ -1,0 +1,31 @@
+# Node
+node_modules/
+coverage/
+*.tsbuildinfo
+
+# Instance data: runtime state and the bot's memory (an agent repo tracks its own)
+data/
+memories/
+
+# Env
+.env
+.env.local
+
+# Project-specific prompt (not shipped with open-source tars)
+prompts/project.md
+
+# Operator config: copied from the *.example files on setup and customised
+# per deployment, so deployments don't fight over them.
+plugins.json
+access.json
+default-reminders.json
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+.claude/settings.local.json
+
+# SQLite side files from opening fixtures in place
+*.db-shm
+*.db-wal

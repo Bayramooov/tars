@@ -1,0 +1,27 @@
+# Dependencies are installed in the image
+node_modules/
+
+# Runtime data (mounted as volumes, not baked into the image)
+data/
+prompts/project.md
+
+# Env (secrets — passed via env_file)
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Docs and tests (not needed at runtime)
+docs/
+test/
+coverage/
+
+# Claude Code local state
+.claude/

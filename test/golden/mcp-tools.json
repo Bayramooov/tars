@@ -1,0 +1,1087 @@
+{
+  "tools": [
+    {
+      "name": "browser_back",
+      "description": "Go back one entry in the browser history on the current page (call browser_navigate first). Returns the URL landed on.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "browser_click",
+      "description": "Click an element on the current browser page (call browser_navigate first). Waits up to ~10s for the element to be actionable.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "description": "CSS selector of the element to click."
+          }
+        },
+        "required": [
+          "selector"
+        ]
+      }
+    },
+    {
+      "name": "browser_download",
+      "description": "Download the original file at a URL (typically an image) through the browser session and save it under data/renders/, returning its path. Pass that path to telegram_send_photo to deliver it. Get the URL first with browser_get_attribute (e.g. an <img>'s 'src'). Accepts http(s) (private hosts blocked) and data: URIs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "description": "http(s) URL or data: URI of the file, e.g. an image's src."
+          },
+          "title": {
+            "default": null,
+            "description": "Optional label baked into the saved filename.",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    },
+    {
+      "name": "browser_fill",
+      "description": "Type a value into an input/textarea on the current browser page (call browser_navigate first). Replaces existing content. Pair with browser_click to submit.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "description": "CSS selector of the input or textarea to fill."
+          },
+          "value": {
+            "type": "string",
+            "description": "Text to type into the field (replaces any existing value)."
+          }
+        },
+        "required": [
+          "selector",
+          "value"
+        ]
+      }
+    },
+    {
+      "name": "browser_get_attribute",
+      "description": "Read one HTML attribute of an element on the current page (call browser_navigate first), e.g. an image's 'src' or a link's 'href'. Returns the value, or notes the attribute is absent.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "description": "CSS selector of the element to read."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Attribute name to read, e.g. 'href', 'src', 'value'."
+          }
+        },
+        "required": [
+          "selector",
+          "name"
+        ]
+      }
+    },
+    {
+      "name": "browser_get_html",
+      "description": "Return the HTML of the current page, or one element's inner HTML with a selector (call browser_navigate first). Use when structure/attributes matter; for plain reading prefer browser_get_text. Truncated to 20000 characters.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "default": null,
+            "description": "CSS selector for one element's inner HTML; omit for the full page.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "browser_get_text",
+      "description": "Return the visible text of the current browser page (call browser_navigate first). Pass a CSS selector to scope to one element, else the whole body. Truncated to 10000 characters.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "default": "body",
+            "description": "CSS selector to scope extraction; defaults to the whole page body.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "name": "browser_list",
+      "description": "List the elements matching a selector on the current page (call browser_navigate first) with their text and href/src — handy for choosing which link/image to act on. Reports up to 50.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "description": "CSS selector matching the elements to list, e.g. 'a', 'img', '.result'."
+          }
+        },
+        "required": [
+          "selector"
+        ]
+      }
+    },
+    {
+      "name": "browser_navigate",
+      "description": "Open a URL in a shared headless Chromium page and wait for the DOM to load. Start here, then use the other browser_* tools (get_text, click, fill, screenshot, wait_for) on the SAME page. Unlike render_html the browser has live network access, but private/internal hosts are blocked. ~30s load budget.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Absolute http(s) URL to load. Internal/private hosts (localhost, 10.x, 192.168.x, link-local) and non-http schemes are refused."
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    },
+    {
+      "name": "browser_press_key",
+      "description": "Press a keyboard key on the current page (call browser_navigate first). Use 'Enter' to submit a search/form, 'Tab' to move focus. Pass a selector to target a field, else the key goes to the focused element.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Key to press, e.g. 'Enter', 'Tab', 'Escape', 'ArrowDown'."
+          },
+          "selector": {
+            "default": null,
+            "description": "CSS selector to focus first; omit to send to the focused element.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "key"
+        ]
+      }
+    },
+    {
+      "name": "browser_reload",
+      "description": "Reload the current browser page (call browser_navigate first). Use when content changed or didn't finish loading.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "browser_reset",
+      "description": "Close the current browser page and clear its cookies/state. The next browser_navigate opens a fresh isolated tab. Use to start clean between unrelated tasks or to recover a stuck page.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "browser_screenshot",
+      "description": "Screenshot the current browser page to a PNG under data/renders/ and return its path (call browser_navigate first). Pass a CSS selector to capture just one element. Pass the returned path to telegram_send_photo to deliver it to a chat.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "default": null,
+            "description": "CSS selector to capture a single element; omit to capture the page.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "full_page": {
+            "default": true,
+            "description": "Capture the whole scrollable page (ignored when selector is set).",
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "browser_scroll",
+      "description": "Scroll the current page (call browser_navigate first) to reveal lazy-loaded content. Pass a selector to scroll that element into view, or omit it to scroll the window by `pixels`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "default": null,
+            "description": "CSS selector to scroll into view; omit to scroll the window.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pixels": {
+            "default": 1000,
+            "description": "Vertical pixels to scroll when no selector is given (negative = up).",
+            "type": "integer"
+          }
+        }
+      }
+    },
+    {
+      "name": "browser_select_option",
+      "description": "Choose an option in a <select> dropdown on the current page (call browser_navigate first). Use this instead of browser_fill for native dropdowns.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "description": "CSS selector of the <select> element."
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Option to choose — matched against its value, then its label."
+          }
+        },
+        "required": [
+          "selector",
+          "value"
+        ]
+      }
+    },
+    {
+      "name": "browser_wait_for",
+      "description": "Wait for an element to appear on the current browser page (call browser_navigate first). Use after a click that loads content asynchronously, before reading or acting on it.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "selector": {
+            "type": "string",
+            "minLength": 1,
+            "description": "CSS selector to wait for until it appears in the DOM."
+          },
+          "timeout_ms": {
+            "default": 10000,
+            "description": "How long to wait in milliseconds (default 10000, max 30000).",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30000
+          }
+        },
+        "required": [
+          "selector"
+        ]
+      }
+    },
+    {
+      "name": "database_get_recent_messages",
+      "description": "Return the most recent messages (both directions), oldest-first, as TSV with a header line. Includes the current turn's own inbound messages. Use this for quick conversation recall; use database_query for filtering, joins, or other tables. Capped at 100 rows; text columns truncated to 2000 chars.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "default": 20,
+            "description": "How many recent messages to return, oldest-first. Defaults to 20, clamped to 100.",
+            "type": "integer"
+          },
+          "chat_id": {
+            "default": null,
+            "description": "Restrict to one chat. Omit to span all chats.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "before_message_id": {
+            "default": null,
+            "description": "Return only messages older than this message id, for paging back through history. Message ids are per-chat, so pass it with chat_id.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "database_query",
+      "description": "Run a single read-only SELECT against the agent's local SQLite. Returns rows as TSV with a header line. Capped at 100 rows; text columns truncated to 2000 chars. If the query already has a LIMIT, it is respected (and clamped down to 100 if larger).\n\nTables and their time columns:\n  messages(chat_id, message_id, user_id, username, first_name,\n           direction, timestamp, text, reply_to_id, reply_to_text,\n           edited, deleted)  -- time column: `timestamp` (NOT created_at)\n  users(chat_id, user_id, username, first_name, join_date,\n        last_message_date, message_count)\n  reactions(id, chat_id, message_id, user_id, emoji, created_at)\n  tool_calls(id, tool_name, args_json, result_json, error,\n             duration_ms, created_at)\n  reminders -- see reminder_set docs",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sql": {
+            "type": "string",
+            "description": "A single SELECT statement. No semicolons, no DML, no PRAGMA. Capped at 100 rows; text columns truncated to 2000 chars."
+          }
+        },
+        "required": [
+          "sql"
+        ]
+      }
+    },
+    {
+      "name": "instruction_append",
+      "description": "Append text to project.md, your project-specific behaviour overlay. system.md is read-only (git-tracked); all owner-requested behaviour changes go here. Use ONLY when the bot owner has asked. Refuse for any non-owner sender. Apply immediately when the owner has stated the change — don't ask for another round of confirmation. A timestamped backup is taken to data/prompt_backups/ before every write. Changes take effect on the next container restart.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Text to append. No trailing newline is added automatically."
+          }
+        },
+        "required": [
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "instruction_read",
+      "description": "Read the current contents of project.md (your project-specific behaviour overlay, concatenated after system.md to form your full prompt). Use ONLY when the bot owner has asked. Refuse for any non-owner sender.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "instruction_rewrite",
+      "description": "Replace the ENTIRE contents of project.md. Use ONLY when the bot owner has approved removing or relocating a rule (append can't remove). Refuse for any non-owner sender. Read project.md with instruction_read first, drop or relocate the block, then pass the full remaining body. A timestamped backup is taken to data/prompt_backups/ before every write. Changes take effect on the next container restart.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The full new project.md body — this REPLACES the file entirely. Read with instruction_read first, drop or relocate the block, then pass the whole remaining body."
+          }
+        },
+        "required": [
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "memory_append",
+      "description": "Append text to a memory file's body AND refresh its one-line description (kept in frontmatter) so memory_list always reflects the latest content. The file's name is preserved (or derived from the filename for a new/legacy file — the first append adds frontmatter). New total must stay under 64 KiB. If the file already exists you MUST call memory_read on it first in the same session. Appends go to 'memories/...'. Useful for journals, running notes, conversation logs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Full project path under 'memories/'. The 'memories/' prefix is REQUIRED; a bare path is rejected. No '..', no absolute paths."
+          },
+          "content": {
+            "type": "string",
+            "description": "Text to append to the body. A trailing newline is NOT added."
+          },
+          "description": {
+            "type": "string",
+            "description": "Fresh one-line summary of what the file holds after this append. Replaces the file's frontmatter description so memory_list stays current. Max 1024 chars."
+          }
+        },
+        "required": [
+          "path",
+          "content",
+          "description"
+        ]
+      }
+    },
+    {
+      "name": "memory_list",
+      "description": "List every memory file, each shown by its FULL project path ('memories/...') with its frontmatter description, enough to decide which memory is relevant without reading the whole file (the same progressive-disclosure protocol skill_list uses). Pass a path from this list verbatim to memory_read/write/append. Memories carry name/description frontmatter; legacy files without it show just their path and size. To find files by their CONTENTS rather than their summaries, use memory_search instead.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "memory_read",
+      "description": "Read ONE memory file by its full project path ('memories/...'). Pass the exact path from memory_list/memory_search; a wrong path just fails, it does not fall back. To read several files, call this once per path (the calls can run in parallel). UTF-8; files over 64 KiB are truncated. Reading a file unlocks writing/appending to it this session.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "EXACT full project path, copied verbatim from memory_list or memory_search — do not retype or guess it. Starts with 'memories/'. The prefix is REQUIRED. No '..', no absolute paths."
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "memory_search",
+      "description": "Search the TEXT INSIDE memory files (not just their names) for keywords, across all 'memories/' files. Case-insensitive. Returns matching lines as 'path:line: text', best matches first, where 'path' is the full project path. Faster than memory_list plus reading every file: search first, then memory_read the most relevant file by copying its exact path from these results.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Keywords to find inside memory file contents (case-insensitive). Use a few keywords, not a full sentence — e.g. 'acme deadline', not 'when is the Acme deadline?'. Lines matching more of your keywords rank higher."
+          },
+          "max_results": {
+            "default": 50,
+            "description": "Maximum number of matching lines to return.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "memory_write",
+      "description": "Create or fully overwrite a memory file under 'memories/...'. Max 64 KiB. Content MUST start with name/description frontmatter (the template) — writes without it are rejected — so memory_list can show what the file is about. Rewrite the description whenever the content changes. If the file already exists you MUST call memory_read on it first in the same session — a safety rail against destroying notes whose content you never saw. New files can be created without a prior read. Conventional locations (match these, don't invent new structure): per-user profile → memories/notes/users/<telegram_user_id>.md; per-group behaviors → memories/notes/groups/<chat_id>.md; cross-session reference → memories/notes/<topic>.md; one-off report → memories/docs/<topic>-<YYYY-MM-DD>.md. Create per-user and per-group files lazily, after a few real exchanges. Writes to local storage only — to send a memory file to the user, use telegram_send_memory_document.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Full project path under 'memories/'. The 'memories/' prefix is REQUIRED; a bare path is rejected. No '..', no absolute paths. Parent directories are created automatically."
+          },
+          "content": {
+            "type": "string",
+            "description": "Full new file body. Overwrites any existing content. MUST begin with the frontmatter template:\n---\nname: <short human-friendly label>\ndescription: <one-line summary used to find this memory without reading it>\n---\n\n<body — the actual remembered content>\n\nKeep the description a fresh one-line summary of what the file now holds."
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "time_now",
+      "description": "Return the current time as ISO8601 in both UTC and the host's local timezone. Use to ground 'now' before computing a date/time. To schedule a future action use reminder_set, not this. Doubles as a basic 'is the tool channel alive' check.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "reminder_cancel",
+      "description": "Cancel a pending reminder by id (get ids from reminder_list). Auto-seeded mandatory reminders (e.g. the self-reflection loop) cannot be cancelled through this tool — attempts are refused and the reminder continues to fire on schedule.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reminder_id": {
+            "type": "integer",
+            "description": "Numeric id of the reminder to cancel, as shown by reminder_list."
+          }
+        },
+        "required": [
+          "reminder_id"
+        ]
+      }
+    },
+    {
+      "name": "reminder_list",
+      "description": "List all pending reminders for a chat, ordered by trigger time. Use to find a reminder's id before calling reminder_cancel.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id to list reminders for."
+          }
+        },
+        "required": [
+          "chat_id"
+        ]
+      }
+    },
+    {
+      "name": "reminder_set",
+      "description": "Schedule a reminder to fire later — one-shot (trigger_at only) or recurring (also set cron_expr). trigger_at is UTC ISO-8601 and must be in the future; ask the user's timezone if unknown and convert to UTC first. Do NOT use for something to do right now — just do it. Manage existing reminders with reminder_list and reminder_cancel.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id where the reminder should fire."
+          },
+          "user_id": {
+            "type": "integer",
+            "description": "Numeric Telegram user id who requested the reminder."
+          },
+          "text": {
+            "type": "string",
+            "description": "The reminder message text."
+          },
+          "trigger_at": {
+            "type": "string",
+            "description": "When to fire, as a UTC ISO-8601 datetime string with offset (e.g. '2026-04-15T14:30:00Z'). Must be in the FUTURE. Convert the user's local time to UTC before passing this value."
+          },
+          "cron_expr": {
+            "default": null,
+            "description": "Optional 5-field cron expression (evaluated in UTC) for recurring reminders, e.g. '0 9 * * 1-5' for weekdays at 09:00 UTC. Leave null for one-shot reminders.",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "chat_id",
+          "user_id",
+          "text",
+          "trigger_at"
+        ]
+      }
+    },
+    {
+      "name": "render_html",
+      "description": "Render an HTML snippet to a PNG via headless Chromium and save it under data/renders/. Returns the relative path; it is NOT sent — pair with telegram_send_photo to deliver it. Use for tables/charts/diffs Telegram markdown can't represent (it renders ASCII tables poorly); for math formulas use render_latex. Outbound network is BLOCKED in the browser, so inline any CSS/JS libs you need (Chart.js, D3, fonts). Renders synchronously with a ~30s budget.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "html": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Full HTML body to render. Inline all CSS/JS — outbound network is blocked. Wrap with <!DOCTYPE html><html><body>...</body></html> for full control over fonts and viewport meta."
+          },
+          "width": {
+            "default": 800,
+            "description": "Viewport width in pixels (default 800).",
+            "type": "integer",
+            "minimum": 200,
+            "maximum": 4000
+          },
+          "height": {
+            "default": 600,
+            "description": "Viewport height in pixels (default 600). Full page is captured regardless.",
+            "type": "integer",
+            "minimum": 200,
+            "maximum": 4000
+          },
+          "title": {
+            "default": null,
+            "description": "Optional human-readable label baked into the filename for easier identification.",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "html"
+        ]
+      }
+    },
+    {
+      "name": "render_latex",
+      "description": "Render a LaTeX expression to a PNG via KaTeX. Use for math formulas, equations, integrals, matrices — anything LaTeX-native Telegram can't display inline; for general tables/charts use render_html. Returns the relative path under data/renders/; it is NOT sent — pair with telegram_send_photo to deliver. Pass the LaTeX without surrounding $$ (the wrapper adds them) and without a literal </script> token. Renders synchronously with a ~30s budget.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "latex": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8000,
+            "description": "LaTeX expression to render. Don't include the surrounding $$ delimiters — the wrapper adds them. Examples: ``\\sum_{i=0}^{n} i^2``, ``\\int_0^\\infty e^{-x^2} dx``, ``\\begin{align} a &= b \\\\ c &= d \\end{align}``."
+          },
+          "title": {
+            "default": null,
+            "description": "Optional human-readable label. Rendered as an h2 above the formula and baked into the output filename.",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "latex"
+        ]
+      }
+    },
+    {
+      "name": "skill_list",
+      "description": "List available agent skills (playbooks) under the project's skills/ directory, following the Agent Skills spec (https://agentskills.io/specification). Returns each skill's name and its frontmatter description — enough to decide which skill is relevant without loading the full body. Fetch the body via skill_read only when you're ready to execute. Skills are typically invoked via `<skill name=\"X\">run</skill>` inside a `<reminder>` envelope.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "skill_read",
+      "description": "Read the playbook (SKILL.md) for a given agent skill. Returns the full markdown content. Call skill_list first if you're not sure what's available. Call this when a `<reminder>` envelope contains `<skill name=\"X\">run</skill>`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Skill name (e.g. 'self-reflection'). Must be a single directory name."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    {
+      "name": "skill_write",
+      "description": "Create or update a skill playbook at skills/<name>/SKILL.md. Use ONLY when the bot owner has approved the new/updated playbook (e.g. via the self-reflection loop). Refuse for any non-owner sender. The content must carry valid frontmatter whose name matches <name>; max 256 KiB. Overwriting an existing skill requires calling skill_read on it first this session. Visible via skill_list/skill_read immediately; the preloaded skills index in your prompt refreshes on the next restart. skills/ is git-tracked — commit the result like a memory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Single-component skill directory name, e.g. 'weekly-digest' (lowercase letters/digits/hyphens). The frontmatter `name` must equal this."
+          },
+          "content": {
+            "type": "string",
+            "description": "Full SKILL.md text. MUST start with YAML frontmatter carrying `name` (matching the name arg) and a one-line `description`, followed by the playbook body."
+          }
+        },
+        "required": [
+          "name",
+          "content"
+        ]
+      }
+    },
+    {
+      "name": "telegram_add_reaction",
+      "description": "React to a Telegram message with a single emoji from Telegram's fixed allowlist (see the emoji parameter for the exact set). Prefer a reaction over a throwaway 'ok'/'👍' text message in groups. Replaces any previous reaction the bot left on that message.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "message_id": {
+            "type": "integer",
+            "description": "Numeric id of the message to react to."
+          },
+          "emoji": {
+            "type": "string",
+            "description": "One of the Telegram-supported reaction emojis: ☃ ⚡ ✍ ❤ ❤‍🔥 🆒 🌚 🌭 🍌 🍓 🍾 🎃 🎄 🎅 🎉 🏆 🐳 👀 👌 👍 👎 👏 👨‍💻 👻 👾 💅 💊 💋 💔 💘 💩 💯 🔥 🕊 🖕 🗿 😁 😇 😈 😍 😎 😐 😘 😡 😢 😨 😭 😱 😴 🙈 🙉 🙊 🙏 🤓 🤔 🤗 🤝 🤡 🤣 🤨 🤩 🤪 🤬 🤮 🤯 🤷 🤷‍♀ 🤷‍♂ 🥰 🥱 🥴 🦄 🫡."
+          }
+        },
+        "required": [
+          "chat_id",
+          "message_id",
+          "emoji"
+        ]
+      }
+    },
+    {
+      "name": "telegram_create_poll",
+      "description": "Send a Telegram poll — a regular vote or a quiz with one correct answer. Use for structured voting; for plain text use telegram_send_message. Sends immediately. Rules: 2–10 options, each 1–100 chars; for type='quiz' you MUST set correct_option_id and must NOT set allows_multiple_answers; for type='regular' omit correct_option_id and explanation; open_period and close_date are mutually exclusive. Returns message_id and poll_id (pass them to telegram_stop_poll to close the poll early).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300,
+            "description": "Poll question (1–300 chars)."
+          },
+          "options": {
+            "minItems": 2,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Answer options: 2–10 strings, each 1–100 chars."
+          },
+          "is_anonymous": {
+            "default": true,
+            "description": "Whether votes are anonymous. Default true.",
+            "type": "boolean"
+          },
+          "type": {
+            "default": "regular",
+            "description": "'regular' for a normal vote, 'quiz' for a single-correct-answer quiz. Default 'regular'.",
+            "type": "string",
+            "enum": [
+              "regular",
+              "quiz"
+            ]
+          },
+          "allows_multiple_answers": {
+            "default": false,
+            "description": "Let voters pick several options. Regular polls only; must be false for quizzes. Default false.",
+            "type": "boolean"
+          },
+          "correct_option_id": {
+            "default": null,
+            "description": "0-based index of the correct option. Required when type='quiz'; omit for regular polls.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "explanation": {
+            "default": null,
+            "description": "Shown when a quiz answer is wrong. Quiz only.",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "open_period": {
+            "default": null,
+            "description": "Auto-close after N seconds (5-600). Mutually exclusive with close_date.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 5,
+                "maximum": 600
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "close_date": {
+            "default": null,
+            "description": "Unix timestamp 5-600s in the future. Mutually exclusive with open_period.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reply_to_message_id": {
+            "default": null,
+            "description": "Optional. Quote-reply the poll to this message id; omit for a standalone poll.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "chat_id",
+          "question",
+          "options"
+        ]
+      }
+    },
+    {
+      "name": "telegram_delete_message",
+      "description": "Permanently delete a message by id. IRREVERSIBLE — the message is gone for everyone, with no undo. Use sparingly (e.g. removing a mistaken send); do NOT use to 'take back' content the user has already read. Bots can only delete fairly recent messages.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "message_id": {
+            "type": "integer",
+            "description": "Numeric id of the message to delete."
+          }
+        },
+        "required": [
+          "chat_id",
+          "message_id"
+        ]
+      }
+    },
+    {
+      "name": "telegram_edit_message",
+      "description": "Replace the text of a message THIS BOT already sent. Use for in-progress updates on a long task — edits do NOT trigger a Telegram push notification, unlike a new message. Only works on the bot's own recent messages; to post fresh text use telegram_send_message.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "message_id": {
+            "type": "integer",
+            "description": "Numeric id of the bot's own message to edit (e.g. a message_id returned by telegram_send_message)."
+          },
+          "text": {
+            "type": "string",
+            "description": "New body, replacing the old text entirely. Markdown by default — auto-converted to Telegram HTML."
+          }
+        },
+        "required": [
+          "chat_id",
+          "message_id",
+          "text"
+        ]
+      }
+    },
+    {
+      "name": "telegram_read_attachment",
+      "description": "Read a Telegram attachment that the user sent. Inbound photos and documents are saved under data/attachments/ by the dispatcher and surfaced as ``[attachment: <path> ...]`` markers in the user's message. Pass that path here. Images are returned as image content blocks (so you can actually see them); text-like files (md, txt, log, csv, json, yaml, code, ...) are returned as UTF-8 text. PDFs are returned as their text, with ``--- page N ---`` markers.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Either the absolute path printed in the inbound ``[attachment: ...]`` marker, or a path relative to ``data/attachments/``. Path traversal (``..``) and symlinks are rejected."
+          }
+        },
+        "required": [
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "telegram_reply_to_message",
+      "description": "Reply to a specific message, threading to it so the parent is unambiguous. This is how you answer EVERY inbound message, in DMs and groups alike — thread to the message you're answering. A DM having only one conversation is not a reason to skip threading. Use telegram_send_message only when there is no inbound message to answer (e.g. a scheduled timer reminder or a proactive post). Sends immediately; long text auto-splits at paragraph boundaries.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "reply_to_message_id": {
+            "type": "integer",
+            "description": "Numeric id of the message to quote-reply within chat_id."
+          },
+          "text": {
+            "type": "string",
+            "description": "Reply body. Markdown by default — auto-converted to Telegram HTML."
+          }
+        },
+        "required": [
+          "chat_id",
+          "reply_to_message_id",
+          "text"
+        ]
+      }
+    },
+    {
+      "name": "telegram_send_message",
+      "description": "Send a NEW, unthreaded text message to a Telegram chat. Use ONLY when there is no inbound message to answer — a scheduled reminder firing on a timer, or a proactive/unprompted post you initiate. Whenever you are answering an inbound message — in a DM or a group, even a quiet one-on-one DM — use telegram_reply_to_message instead so the reply threads to it. Does NOT edit or quote existing messages (use telegram_edit_message / telegram_reply_to_message) and does NOT send images or files (use telegram_send_photo / telegram_send_memory_document). Sends immediately and cannot be unsent. Long text is auto-split at paragraph boundaries; returns the first message_id plus every id in ``message_ids``.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "text": {
+            "type": "string",
+            "description": "Message body. Markdown — auto-converted to Telegram HTML."
+          },
+          "reply_to_message_id": {
+            "default": null,
+            "description": "Optional. Make this a quote-reply to the given message id. When a reply target is required, prefer telegram_reply_to_message.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message_thread_id": {
+            "default": null,
+            "description": "Optional. Forum-supergroup topic id. REQUIRED when the inbound <msg> carries a topic=\"...\" attribute — copy that value here, otherwise the message lands in the General topic.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "chat_id",
+          "text"
+        ]
+      }
+    },
+    {
+      "name": "telegram_send_memory_document",
+      "description": "Send a memory file (memories/...) to a chat as a downloadable document. Use when the user asks for a memory file as an attachment rather than pasted text — handy for csv/log/large markdown. For a rendered image use telegram_send_photo; for plain text use telegram_send_message. Path-locked to the memories root (same hardening as memory_read); sends immediately.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "path": {
+            "type": "string",
+            "description": "Full project path to the memory — same shape as memory_read: 'memories/<path>'. The prefix is required. No '..', no absolute paths, no symlinks."
+          },
+          "caption": {
+            "default": null,
+            "description": "Optional plain-text caption shown under the file (max 1024 chars).",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reply_to_message_id": {
+            "default": null,
+            "description": "Optional. Quote-reply the document to this message id; omit for a standalone send.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "chat_id",
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "telegram_send_photo",
+      "description": "Deliver a rendered image (from data/renders/, e.g. the path returned by render_html or render_latex) to a chat as an inline Telegram photo with preview. Use for tables/charts/math that Telegram markdown can't show. For an arbitrary file as a download use telegram_send_memory_document; for plain text use telegram_send_message. Path-locked to the renders root; sends immediately.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id (e.g. -1001234567890 for a group, a positive int for a DM). Not an @username."
+          },
+          "path": {
+            "type": "string",
+            "description": "Relative path under data/renders/ — typically the value returned by render_html. No '..', no absolute paths."
+          },
+          "caption": {
+            "default": null,
+            "description": "Optional plain-text caption shown under the photo (max 1024 chars).",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1024
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reply_to_message_id": {
+            "default": null,
+            "description": "Optional. Quote-reply the photo to this message id; omit for a standalone send.",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "chat_id",
+          "path"
+        ]
+      }
+    },
+    {
+      "name": "telegram_stop_poll",
+      "description": "Close an open Telegram poll early and return the final vote tallies. Use the chat_id and message_id returned by the telegram_create_poll that created it. The poll stops accepting votes immediately.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chat_id": {
+            "type": "integer",
+            "description": "Numeric Telegram chat id where the poll was sent."
+          },
+          "message_id": {
+            "type": "integer",
+            "description": "Numeric message_id of the poll to close."
+          }
+        },
+        "required": [
+          "chat_id",
+          "message_id"
+        ]
+      }
+    },
+    {
+      "name": "tool_list",
+      "description": "List the tools currently available to you, with each tool's name and short description. Use it to discover what you can do, or to find tools related to a task before acting. Disabled tools are not listed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

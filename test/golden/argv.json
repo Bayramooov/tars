@@ -1,0 +1,1545 @@
+{
+  "schema_json": "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+  "cases": [
+    {
+      "label": "missing-file",
+      "resume": false,
+      "plugins": null,
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "missing-file",
+      "resume": true,
+      "plugins": null,
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "empty-object",
+      "resume": false,
+      "plugins": {},
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "empty-object",
+      "resume": true,
+      "plugins": {},
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "example",
+      "resume": false,
+      "plugins": {
+        "builtin_tools_disabled": [],
+        "tool_groups": {
+          "bash": false,
+          "code": false,
+          "subagents": false
+        },
+        "skills_disabled": [],
+        "mcps": [
+          {
+            "name": "deepwiki",
+            "type": "http",
+            "url": "https://mcp.deepwiki.com/mcp",
+            "allowed_tools": [
+              "mcp__deepwiki"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "github",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@modelcontextprotocol/server-github"
+            ],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+            },
+            "allowed_tools": [
+              "mcp__github"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "mcp-gitlab",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@zereight/mcp-gitlab"
+            ],
+            "env": {
+              "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_TOKEN}",
+              "GITLAB_API_URL": "${GITLAB_URL}/api/v4"
+            },
+            "allowed_tools": [
+              "mcp__mcp-gitlab"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "mcp-atlassian",
+            "type": "http",
+            "url": "https://mcp.atlassian.com/v1/mcp",
+            "allowed_tools": [
+              "mcp__mcp-atlassian"
+            ],
+            "enabled": false
+          }
+        ]
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "example",
+      "resume": true,
+      "plugins": {
+        "builtin_tools_disabled": [],
+        "tool_groups": {
+          "bash": false,
+          "code": false,
+          "subagents": false
+        },
+        "skills_disabled": [],
+        "mcps": [
+          {
+            "name": "deepwiki",
+            "type": "http",
+            "url": "https://mcp.deepwiki.com/mcp",
+            "allowed_tools": [
+              "mcp__deepwiki"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "github",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@modelcontextprotocol/server-github"
+            ],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+            },
+            "allowed_tools": [
+              "mcp__github"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "mcp-gitlab",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@zereight/mcp-gitlab"
+            ],
+            "env": {
+              "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_TOKEN}",
+              "GITLAB_API_URL": "${GITLAB_URL}/api/v4"
+            },
+            "allowed_tools": [
+              "mcp__mcp-gitlab"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "mcp-atlassian",
+            "type": "http",
+            "url": "https://mcp.atlassian.com/v1/mcp",
+            "allowed_tools": [
+              "mcp__mcp-atlassian"
+            ],
+            "enabled": false
+          }
+        ]
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "all-groups",
+      "resume": false,
+      "plugins": {
+        "tool_groups": {
+          "bash": true,
+          "code": true,
+          "subagents": true
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Bash`\n- `PowerShell`\n- `Monitor`\n- `Edit`\n- `Write`\n- `Read`\n- `NotebookEdit`\n- `Glob`\n- `Grep`\n- `LSP`\n- `Agent`\n- `SendMessage`\n\n\n# Subagents\n\nUse Agent wisely.\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent,SendMessage",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--disallowedTools",
+        "",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "all-groups",
+      "resume": true,
+      "plugins": {
+        "tool_groups": {
+          "bash": true,
+          "code": true,
+          "subagents": true
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Bash`\n- `PowerShell`\n- `Monitor`\n- `Edit`\n- `Write`\n- `Read`\n- `NotebookEdit`\n- `Glob`\n- `Grep`\n- `LSP`\n- `Agent`\n- `SendMessage`\n\n\n# Subagents\n\nUse Agent wisely.\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent,SendMessage",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--disallowedTools",
+        "",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "bash-only",
+      "resume": false,
+      "plugins": {
+        "tool_groups": {
+          "bash": true
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Bash`\n- `PowerShell`\n- `Monitor`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Bash,PowerShell,Monitor",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Bash,PowerShell,Monitor",
+        "--disallowedTools",
+        "Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "bash-only",
+      "resume": true,
+      "plugins": {
+        "tool_groups": {
+          "bash": true
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Bash`\n- `PowerShell`\n- `Monitor`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Bash,PowerShell,Monitor",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Bash,PowerShell,Monitor",
+        "--disallowedTools",
+        "Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "code-only",
+      "resume": false,
+      "plugins": {
+        "tool_groups": {
+          "code": true,
+          "bash": false
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Edit`\n- `Write`\n- `Read`\n- `NotebookEdit`\n- `Glob`\n- `Grep`\n- `LSP`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "code-only",
+      "resume": true,
+      "plugins": {
+        "tool_groups": {
+          "code": true,
+          "bash": false
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Edit`\n- `Write`\n- `Read`\n- `NotebookEdit`\n- `Glob`\n- `Grep`\n- `LSP`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "subagents-only",
+      "resume": false,
+      "plugins": {
+        "tool_groups": {
+          "subagents": true
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Agent`\n- `SendMessage`\n\n\n# Subagents\n\nUse Agent wisely.\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Agent,SendMessage",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Agent",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "subagents-only",
+      "resume": true,
+      "plugins": {
+        "tool_groups": {
+          "subagents": true
+        }
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n- `Agent`\n- `SendMessage`\n\n\n# Subagents\n\nUse Agent wisely.\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate,Agent,SendMessage",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,Agent",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "mcps",
+      "resume": false,
+      "plugins": {
+        "mcps": [
+          {
+            "name": "github",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@x/server-github"
+            ],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "${GH_TOKEN}"
+            },
+            "allowed_tools": [
+              "mcp__github"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "gitlab",
+            "command": "npx",
+            "args": [
+              "-y",
+              "gl"
+            ],
+            "env": {
+              "GITLAB_API_URL": "${GITLAB_URL}/api/v4",
+              "T": "${MISSING_VAR}"
+            },
+            "allowed_tools": [
+              "mcp__gitlab"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "atlassian",
+            "type": "http",
+            "url": "https://mcp.example.com/v1/mcp",
+            "headers": {
+              "Authorization": "Bearer ${ATL_TOKEN}"
+            },
+            "allowed_tools": [
+              "mcp__atlassian__jira_search",
+              "mcp__atlassian__jira_get"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "events",
+            "type": "sse",
+            "url": "${SSE_URL}",
+            "allowed_tools": [
+              "mcp__events"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "off",
+            "command": "x",
+            "allowed_tools": [
+              "mcp__off"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "deepwiki",
+            "type": "http",
+            "url": "https://mcp.deepwiki.com/mcp",
+            "allowed_tools": [
+              "mcp__deepwiki"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "env": {
+        "GH_TOKEN": "ghs_test",
+        "GITLAB_URL": "https://gl.example.com",
+        "ATL_TOKEN": "atl",
+        "SSE_URL": "https://sse.example.com/sse"
+      },
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n\n## External MCP tools — call with the `mcp__<server>__` prefix\nDiscover exact names via ToolSearch, then call them verbatim:\n- `mcp__github__<tool>`\n- `mcp__atlassian__<tool>`\n- `mcp__events__<tool>`\n- `mcp__deepwiki__<tool>`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,mcp__github,mcp__atlassian__jira_search,mcp__atlassian__jira_get,mcp__events,mcp__deepwiki",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          },
+          "github": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@x/server-github"
+            ],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "ghs_test"
+            }
+          },
+          "atlassian": {
+            "type": "http",
+            "url": "https://mcp.example.com/v1/mcp",
+            "headers": {
+              "Authorization": "Bearer atl"
+            }
+          },
+          "events": {
+            "type": "sse",
+            "url": "https://sse.example.com/sse"
+          },
+          "deepwiki": {
+            "type": "http",
+            "url": "https://mcp.deepwiki.com/mcp"
+          }
+        }
+      }
+    },
+    {
+      "label": "mcps",
+      "resume": true,
+      "plugins": {
+        "mcps": [
+          {
+            "name": "github",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@x/server-github"
+            ],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "${GH_TOKEN}"
+            },
+            "allowed_tools": [
+              "mcp__github"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "gitlab",
+            "command": "npx",
+            "args": [
+              "-y",
+              "gl"
+            ],
+            "env": {
+              "GITLAB_API_URL": "${GITLAB_URL}/api/v4",
+              "T": "${MISSING_VAR}"
+            },
+            "allowed_tools": [
+              "mcp__gitlab"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "atlassian",
+            "type": "http",
+            "url": "https://mcp.example.com/v1/mcp",
+            "headers": {
+              "Authorization": "Bearer ${ATL_TOKEN}"
+            },
+            "allowed_tools": [
+              "mcp__atlassian__jira_search",
+              "mcp__atlassian__jira_get"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "events",
+            "type": "sse",
+            "url": "${SSE_URL}",
+            "allowed_tools": [
+              "mcp__events"
+            ],
+            "enabled": true
+          },
+          {
+            "name": "off",
+            "command": "x",
+            "allowed_tools": [
+              "mcp__off"
+            ],
+            "enabled": false
+          },
+          {
+            "name": "deepwiki",
+            "type": "http",
+            "url": "https://mcp.deepwiki.com/mcp",
+            "allowed_tools": [
+              "mcp__deepwiki"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "env": {
+        "GH_TOKEN": "ghs_test",
+        "GITLAB_URL": "https://gl.example.com",
+        "ATL_TOKEN": "atl",
+        "SSE_URL": "https://sse.example.com/sse"
+      },
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n- **beta** — Second skill\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__render_latex`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_create_poll`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n\n## External MCP tools — call with the `mcp__<server>__` prefix\nDiscover exact names via ToolSearch, then call them verbatim:\n- `mcp__github__<tool>`\n- `mcp__atlassian__<tool>`\n- `mcp__events__<tool>`\n- `mcp__deepwiki__<tool>`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch,mcp__github,mcp__atlassian__jira_search,mcp__atlassian__jira_get,mcp__events,mcp__deepwiki",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          },
+          "github": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+              "-y",
+              "@x/server-github"
+            ],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "ghs_test"
+            }
+          },
+          "atlassian": {
+            "type": "http",
+            "url": "https://mcp.example.com/v1/mcp",
+            "headers": {
+              "Authorization": "Bearer atl"
+            }
+          },
+          "events": {
+            "type": "sse",
+            "url": "https://sse.example.com/sse"
+          },
+          "deepwiki": {
+            "type": "http",
+            "url": "https://mcp.deepwiki.com/mcp"
+          }
+        }
+      }
+    },
+    {
+      "label": "disabled-tools-and-skills",
+      "resume": false,
+      "plugins": {
+        "builtin_tools_disabled": [
+          "telegram_create_poll",
+          "render_latex"
+        ],
+        "skills_disabled": [
+          "beta"
+        ]
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    },
+    {
+      "label": "disabled-tools-and-skills",
+      "resume": true,
+      "plugins": {
+        "builtin_tools_disabled": [
+          "telegram_create_poll",
+          "render_latex"
+        ],
+        "skills_disabled": [
+          "beta"
+        ]
+      },
+      "env": {},
+      "argv": [
+        "claude",
+        "--print",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--include-partial-messages",
+        "--verbose",
+        "--model",
+        "claude-opus-4-7",
+        "--effort",
+        "high",
+        "--system-prompt",
+        "# System\n\nBe helpful. Oʻzbek ✅\n\n\n# Project\n\nName: Mira\n\n\n# Runtime\n\nYou are running with:\n- model: `claude-opus-4-7`\n- effort: `high`\n\nIf a user asks which model or effort level you are running on, answer honestly with these exact values. This is public info — the hard boundary against revealing internal config does not apply to these two fields.\n\n\n# Available skills\n\nThese operator-curated playbooks live under skills/<name>/SKILL.md. Their names and descriptions are listed here so you always know what exists — load a full body with skill_read(\"<name>\") when one is relevant. skill_list re-fetches this same list on demand.\n\n- **alpha** — First skill — does A\n\n\n# Your memory\n\nStanding context you already hold — carried across restarts under memories/. Every file's path and one-line description is listed here so you know what you know before you reply; read a full file with memory_read(\"<path>\") when one is relevant. memory_list re-fetches this same list and memory_search finds lines across files — use them when you suspect a file changed since this session started.\n\n- `memories/legacy.md`\n- `memories/notes/references.md` — Useful links\n- `memories/people.md` — Who is who\n\n\n# Your tools\n\nCall every tool by its EXACT name below — copy it, never rebuild it from memory or from the short names used elsewhere in this prompt. The `mcp__` prefix belongs ONLY to MCP tools; built-ins are bare.\n\n## tars tools — call with the `mcp__tars__` prefix\n- `mcp__tars__browser_back`\n- `mcp__tars__browser_click`\n- `mcp__tars__browser_download`\n- `mcp__tars__browser_fill`\n- `mcp__tars__browser_get_attribute`\n- `mcp__tars__browser_get_html`\n- `mcp__tars__browser_get_text`\n- `mcp__tars__browser_list`\n- `mcp__tars__browser_navigate`\n- `mcp__tars__browser_press_key`\n- `mcp__tars__browser_reload`\n- `mcp__tars__browser_reset`\n- `mcp__tars__browser_screenshot`\n- `mcp__tars__browser_scroll`\n- `mcp__tars__browser_select_option`\n- `mcp__tars__browser_wait_for`\n- `mcp__tars__database_get_recent_messages`\n- `mcp__tars__database_query`\n- `mcp__tars__instruction_append`\n- `mcp__tars__instruction_read`\n- `mcp__tars__instruction_rewrite`\n- `mcp__tars__memory_append`\n- `mcp__tars__memory_list`\n- `mcp__tars__memory_read`\n- `mcp__tars__memory_search`\n- `mcp__tars__memory_write`\n- `mcp__tars__reminder_cancel`\n- `mcp__tars__reminder_list`\n- `mcp__tars__reminder_set`\n- `mcp__tars__render_html`\n- `mcp__tars__skill_list`\n- `mcp__tars__skill_read`\n- `mcp__tars__skill_write`\n- `mcp__tars__telegram_add_reaction`\n- `mcp__tars__telegram_delete_message`\n- `mcp__tars__telegram_edit_message`\n- `mcp__tars__telegram_read_attachment`\n- `mcp__tars__telegram_reply_to_message`\n- `mcp__tars__telegram_send_memory_document`\n- `mcp__tars__telegram_send_message`\n- `mcp__tars__telegram_send_photo`\n- `mcp__tars__telegram_stop_poll`\n- `mcp__tars__time_now`\n- `mcp__tars__tool_list`\n\n## Built-in tools — bare name, NEVER prefix\n(e.g. `WebFetch`, never `mcp__tars__WebFetch`)\n- `WebFetch`\n- `WebSearch`\n- `StructuredOutput`\n- `ToolSearch`\n- `ListMcpResourcesTool`\n- `ReadMcpResourceTool`\n- `WaitForMcpServers`\n- `TaskCreate`\n- `TaskGet`\n- `TaskList`\n- `TaskUpdate`\n",
+        "--mcp-config",
+        "<SPEC_TMP>/mcp.json",
+        "--strict-mcp-config",
+        "--tools",
+        "WebFetch,WebSearch,StructuredOutput,ToolSearch,ListMcpResourcesTool,ReadMcpResourceTool,WaitForMcpServers,TaskCreate,TaskGet,TaskList,TaskUpdate",
+        "--allowedTools",
+        "mcp__tars,WebFetch,WebSearch",
+        "--disallowedTools",
+        "Bash,PowerShell,Monitor,Edit,Write,Read,NotebookEdit,Glob,Grep,LSP,Agent",
+        "--json-schema",
+        "{\"type\":\"object\",\"properties\":{\"action\":{\"type\":\"string\",\"enum\":[\"stop\",\"skip\",\"heartbeat\"],\"description\":\"What to do after this turn. 'stop' is valid only after a reply was delivered via telegram_send_message or telegram_reply_to_message — plain text blocks are never shown to the user. 'skip' means deliberately sending nothing (group chatter not addressed to you, or the user explicitly asked for no reply).\"},\"reason\":{\"type\":\"string\",\"maxLength\":100,\"description\":\"Terse justification (≤10 words). REQUIRED non-empty when action is 'stop' or 'skip'. Optional (may be omitted) when action is 'heartbeat'.\"}},\"required\":[\"action\"],\"additionalProperties\":false}",
+        "--resume",
+        "11111111-2222-3333-4444-555555555555"
+      ],
+      "mcp_config": {
+        "mcpServers": {
+          "tars": {
+            "type": "http",
+            "url": "http://127.0.0.1:41234/mcp",
+            "alwaysLoad": true
+          }
+        }
+      }
+    }
+  ],
+  "errors": [
+    {
+      "label": "not-json",
+      "plugins": "{nope",
+      "message": "<ROOT>/bad-not-json.json: invalid JSON: Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+    },
+    {
+      "label": "top-level-list",
+      "plugins": [],
+      "message": "<ROOT>/bad-top-level-list.json: top level must be a JSON object"
+    },
+    {
+      "label": "unknown-top-key",
+      "plugins": {
+        "tools": {}
+      },
+      "message": "<ROOT>/bad-unknown-top-key.json: unknown top-level key(s): [\"tools\"]; allowed: [\"builtin_tools_disabled\",\"mcps\",\"skills_disabled\",\"tool_groups\"]"
+    },
+    {
+      "label": "tool-groups-not-object",
+      "plugins": {
+        "tool_groups": []
+      },
+      "message": "<ROOT>/bad-tool-groups-not-object.json: tool_groups must be an object"
+    },
+    {
+      "label": "unknown-group",
+      "plugins": {
+        "tool_groups": {
+          "shell": true
+        }
+      },
+      "message": "<ROOT>/bad-unknown-group.json: tool_groups has unknown key(s): [\"shell\"]; allowed: [\"bash\",\"code\",\"subagents\"]"
+    },
+    {
+      "label": "group-not-bool",
+      "plugins": {
+        "tool_groups": {
+          "bash": "yes"
+        }
+      },
+      "message": "<ROOT>/bad-group-not-bool.json: tool_groups.bash must be true/false, got \"yes\""
+    },
+    {
+      "label": "mcps-not-list",
+      "plugins": {
+        "mcps": {}
+      },
+      "message": "<ROOT>/bad-mcps-not-list.json: mcps must be an array"
+    },
+    {
+      "label": "mcp-not-object",
+      "plugins": {
+        "mcps": [
+          "x"
+        ]
+      },
+      "message": "<ROOT>/bad-mcp-not-object.json: mcps[0] must be an object"
+    },
+    {
+      "label": "mcp-missing-required",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a"
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-mcp-missing-required.json: mcps[0] missing required key(s): [\"allowed_tools\",\"enabled\"]"
+    },
+    {
+      "label": "mcp-unknown-key",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true,
+            "command": "x",
+            "foo": 1
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-mcp-unknown-key.json: mcps[0] has unknown key(s): [\"foo\"]; allowed: [\"allowed_tools\",\"args\",\"command\",\"enabled\",\"env\",\"headers\",\"name\",\"type\",\"url\"]"
+    },
+    {
+      "label": "mcp-bad-name",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "bad name",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true,
+            "command": "x"
+          }
+        ]
+      },
+      "ok": true
+    },
+    {
+      "label": "mcp-dup-name",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true,
+            "command": "x"
+          },
+          {
+            "name": "a",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true,
+            "command": "y"
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-mcp-dup-name.json: mcps has duplicate name \"a\"; names become the mcp__<name>__ namespace and must be unique"
+    },
+    {
+      "label": "mcp-bad-type",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "type": "ws",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-mcp-bad-type.json: mcps[\"a\"].type must be one of [\"http\",\"sse\",\"stdio\"]; got \"ws\""
+    },
+    {
+      "label": "stdio-no-command",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-stdio-no-command.json: mcps[\"a\"] (type=stdio) requires 'command'"
+    },
+    {
+      "label": "stdio-with-url",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "url": "http://x",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-stdio-with-url.json: mcps[\"a\"] is type=stdio but has remote-only key(s) [\"url\"]; use command/args/env, not url/headers"
+    },
+    {
+      "label": "http-no-url",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "type": "http",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-http-no-url.json: mcps[\"a\"] (type=http) requires 'url'"
+    },
+    {
+      "label": "http-with-command",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "type": "http",
+            "url": "http://x",
+            "command": "x",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-http-with-command.json: mcps[\"a\"] is type=http but has stdio-only key(s) [\"command\"]; use url/headers, not command/args/env"
+    },
+    {
+      "label": "enabled-not-bool",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": "true"
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-enabled-not-bool.json: mcps[\"a\"].enabled must be true/false"
+    },
+    {
+      "label": "allowed-not-list",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "allowed_tools": "mcp__a",
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-allowed-not-list.json: mcps[\"a\"].allowed_tools must be a non-empty list"
+    },
+    {
+      "label": "allowed-bad-entry",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "allowed_tools": [
+              "github"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "ok": true
+    },
+    {
+      "label": "allowed-empty",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "allowed_tools": [],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-allowed-empty.json: mcps[\"a\"].allowed_tools must be a non-empty list"
+    },
+    {
+      "label": "allowed-non-string",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "allowed_tools": [
+              ""
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-allowed-non-string.json: mcps[\"a\"].allowed_tools[0] must be a non-empty string"
+    },
+    {
+      "label": "env-not-object",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "env": [],
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "mcps[\"a\"].env entries must be string→string"
+    },
+    {
+      "label": "args-not-list",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "command": "x",
+            "args": "y",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "mcps[\"a\"].args must be a list of strings"
+    },
+    {
+      "label": "headers-not-object",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "a",
+            "type": "http",
+            "url": "http://x",
+            "headers": [],
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "mcps[\"a\"].headers entries must be string→string"
+    },
+    {
+      "label": "name-empty",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "",
+            "command": "x",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-name-empty.json: mcps[0].name must be a non-empty string"
+    },
+    {
+      "label": "skills-disabled-not-list",
+      "plugins": {
+        "skills_disabled": "x"
+      },
+      "message": "<ROOT>/bad-skills-disabled-not-list.json: skills_disabled must be an array"
+    },
+    {
+      "label": "builtin-disabled-bad-item",
+      "plugins": {
+        "builtin_tools_disabled": [
+          1
+        ]
+      },
+      "message": "<ROOT>/bad-builtin-disabled-bad-item.json: builtin_tools_disabled[0] must be a non-empty string"
+    },
+    {
+      "label": "tars-name",
+      "plugins": {
+        "mcps": [
+          {
+            "name": "tars",
+            "command": "x",
+            "allowed_tools": [
+              "mcp__a"
+            ],
+            "enabled": true
+          }
+        ]
+      },
+      "message": "<ROOT>/bad-tars-name.json: mcps[0].name \"tars\" is reserved for the built-in server"
+    }
+  ]
+}

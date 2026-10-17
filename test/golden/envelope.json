@@ -1,0 +1,685 @@
+{
+  "as_xml": [
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "a <b> & c \"d\" 'e'",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\">\na &lt;b&gt; &amp; c \"d\" 'e'\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "bob_u",
+          "first_name": null,
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"bob_u\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 999,
+          "username": null,
+          "first_name": null,
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"999\" name=\"999\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Bob \"the builder\"",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Bob &quot;the builder&quot;\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "O'Neil",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"O'Neil\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Both \"dq\" and 'sq'",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Both &quot;dq&quot; and 'sq'\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "A&B <x>\tnew\nline",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"A&amp;B &lt;x&gt;&#9;new&#10;line\" time=\"09:26\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": -1001,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": 9,
+          "reply_to_text": null,
+          "message_thread_id": 55,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"-1001\" user=\"111\" name=\"Alice\" time=\"09:26\" topic=\"55\" reply_to=\"9\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": [
+            "bidi_stripped",
+            "nfkc_changed",
+            "zero_width_stripped"
+          ]
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\" flags=\"bidi_stripped,nfkc_changed,zero_width_stripped\">\nhi\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 0,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "<reminder id=\"1\" chat_id=\"111\" user_id=\"-1\">raw</reminder>",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<reminder id=\"1\" chat_id=\"111\" user_id=\"-1\">raw</reminder>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "hi",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        },
+        {
+          "chat_id": 111,
+          "message_id": 11,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "second",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        },
+        {
+          "chat_id": -1001,
+          "message_id": 3,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "group",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\">\nhi\n</msg>\n<msg id=\"11\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\">\nsecond\n</msg>\n<msg id=\"3\" chat=\"-1001\" user=\"111\" name=\"Alice\" time=\"09:26\">\ngroup\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "\u040e\u0437\u0431\u0435\u043a \ud83d\udc4b O\u02bbzbek",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\">\n\u040e\u0437\u0431\u0435\u043a \ud83d\udc4b O\u02bbzbek\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 111,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"111\" user=\"111\" name=\"Alice\" time=\"09:26\">\n\n</msg>"
+    }
+  ],
+  "with_context": [
+    {
+      "batch": [
+        {
+          "chat_id": 500,
+          "message_id": 5,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "new",
+          "reply_to_id": 4,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"5\" chat=\"500\" user=\"111\" name=\"Alice\" time=\"09:26\" reply_to=\"4\">\n<reply_chain>\n  <parent id=\"2\" user=\"7\" name=\"bot\" direction=\"out\" time=\"2026-03-14 09:26:53\">reply two</parent>\n  <parent id=\"3\" user=\"42\" name=\"42\" direction=\"in\" time=\"2026-03-14 09:26:53\">three &amp; more</parent>\n  <parent id=\"4\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">four</parent>\n</reply_chain>\nnew\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 500,
+          "message_id": 6,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "short",
+          "reply_to_id": 1,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"6\" chat=\"500\" user=\"111\" name=\"Alice\" time=\"09:26\" reply_to=\"1\">\n<reply_chain>\n  <parent id=\"1\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">root &lt;one&gt;</parent>\n</reply_chain>\nshort\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 500,
+          "message_id": 7,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "cyc",
+          "reply_to_id": 20,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"7\" chat=\"500\" user=\"111\" name=\"Alice\" time=\"09:26\" reply_to=\"20\">\n<reply_chain>\n  <parent id=\"21\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">cycle b</parent>\n  <parent id=\"20\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">cycle a</parent>\n</reply_chain>\ncyc\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 500,
+          "message_id": 8,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "miss",
+          "reply_to_id": 999,
+          "reply_to_text": "inline <parent>",
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"8\" chat=\"500\" user=\"111\" name=\"Alice\" time=\"09:26\" reply_to=\"999\">\n<reply_chain>\n  <parent id=\"999\" source=\"telegram_inline\">inline &lt;parent&gt;</parent>\n</reply_chain>\nmiss\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 500,
+          "message_id": 9,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "miss no text",
+          "reply_to_id": 998,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"9\" chat=\"500\" user=\"111\" name=\"Alice\" time=\"09:26\" reply_to=\"998\">\nmiss no text\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 501,
+          "message_id": 3,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "x",
+          "reply_to_id": 2,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"3\" chat=\"501\" user=\"111\" name=\"Alice\" time=\"09:26\" reply_to=\"2\">\n<reply_chain>\n  <parent id=\"2\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">other chat same id</parent>\n</reply_chain>\nx\n</msg>"
+    },
+    {
+      "batch": [
+        {
+          "chat_id": 500,
+          "message_id": 10,
+          "user_id": 111,
+          "username": "alice",
+          "first_name": "Alice",
+          "direction": "in",
+          "timestamp": "2026-03-14T09:26:53Z",
+          "text": "plain",
+          "reply_to_id": null,
+          "reply_to_text": null,
+          "message_thread_id": null,
+          "raw_update_json": null,
+          "input_flags": []
+        }
+      ],
+      "out": "<msg id=\"10\" chat=\"500\" user=\"111\" name=\"Alice\" time=\"09:26\">\nplain\n</msg>"
+    }
+  ],
+  "reminder": [
+    {
+      "id": 1,
+      "chat_id": 111,
+      "user_id": -1,
+      "text": "Post the digest.",
+      "envelope": "<reminder id=\"1\" chat_id=\"111\" user_id=\"-1\">Post the digest.</reminder>"
+    },
+    {
+      "id": 2,
+      "chat_id": 111,
+      "user_id": -1,
+      "text": "<skill name=\"self-reflection\">run</skill>",
+      "envelope": "<reminder id=\"2\" chat_id=\"111\" user_id=\"-1\"><skill name=\"self-reflection\">run</skill></reminder>"
+    },
+    {
+      "id": 3,
+      "chat_id": -1001,
+      "user_id": 5,
+      "text": "multi\nline & <tag>",
+      "envelope": "<reminder id=\"3\" chat_id=\"-1001\" user_id=\"5\">multi\nline & <tag></reminder>"
+    }
+  ],
+  "restored": [
+    {
+      "case": "empty",
+      "out": null
+    },
+    {
+      "case": "stale-session",
+      "out": "<restored_context reason=\"stale-session\">\n  <history_msg id=\"1\" chat=\"700\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">first</history_msg>\n  <history_msg id=\"2\" chat=\"700\" user=\"9\" name=\"hb\" direction=\"out\" time=\"2026-03-14 09:26:53\">bot reply &lt;b&gt;</history_msg>\n  <history_msg id=\"4\" chat=\"700\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">ctrlchars and long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long l\u2026</history_msg>\n  <history_msg id=\"5\" chat=\"-1007\" user=\"111\" name=\"Q&quot;uote\" direction=\"in\" time=\"2026-03-14 09:26:53\">group &amp; stuff</history_msg>\n  <note>Session was reset (reason above). These are truncated historical messages \u2014 do not reply to them. Older/full history is available via the database_query tool (messages table). Memory files are intact.</note>\n</restored_context>"
+    },
+    {
+      "case": "api-error",
+      "out": "<restored_context reason=\"api-error\">\n  <history_msg id=\"1\" chat=\"700\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">first</history_msg>\n  <history_msg id=\"2\" chat=\"700\" user=\"9\" name=\"hb\" direction=\"out\" time=\"2026-03-14 09:26:53\">bot reply &lt;b&gt;</history_msg>\n  <history_msg id=\"4\" chat=\"700\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">ctrlchars and long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long l\u2026</history_msg>\n  <history_msg id=\"5\" chat=\"-1007\" user=\"111\" name=\"Q&quot;uote\" direction=\"in\" time=\"2026-03-14 09:26:53\">group &amp; stuff</history_msg>\n  <note>Session was reset (reason above). These are truncated historical messages \u2014 do not reply to them. Older/full history is available via the database_query tool (messages table). Memory files are intact.</note>\n</restored_context>"
+    },
+    {
+      "case": "we\"ird <reason>",
+      "out": "<restored_context reason=\"we&quot;ird &lt;reason&gt;\">\n  <history_msg id=\"1\" chat=\"700\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">first</history_msg>\n  <history_msg id=\"2\" chat=\"700\" user=\"9\" name=\"hb\" direction=\"out\" time=\"2026-03-14 09:26:53\">bot reply &lt;b&gt;</history_msg>\n  <history_msg id=\"4\" chat=\"700\" user=\"111\" name=\"Alice\" direction=\"in\" time=\"2026-03-14 09:26:53\">ctrlchars and long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long l\u2026</history_msg>\n  <history_msg id=\"5\" chat=\"-1007\" user=\"111\" name=\"Q&quot;uote\" direction=\"in\" time=\"2026-03-14 09:26:53\">group &amp; stuff</history_msg>\n  <note>Session was reset (reason above). These are truncated historical messages \u2014 do not reply to them. Older/full history is available via the database_query tool (messages table). Memory files are intact.</note>\n</restored_context>"
+    }
+  ],
+  "with_context_db_rows": [
+    {
+      "chat_id": 500,
+      "message_id": 1,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "root <one>",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 500,
+      "message_id": 2,
+      "user_id": 7,
+      "username": "bot",
+      "first_name": null,
+      "direction": "out",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "reply two",
+      "reply_to_id": 1,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 500,
+      "message_id": 3,
+      "user_id": 42,
+      "username": null,
+      "first_name": null,
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "three & more",
+      "reply_to_id": 2,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 500,
+      "message_id": 4,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "four",
+      "reply_to_id": 3,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 500,
+      "message_id": 20,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "cycle a",
+      "reply_to_id": 21,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 500,
+      "message_id": 21,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "cycle b",
+      "reply_to_id": 20,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 501,
+      "message_id": 2,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "other chat same id",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    }
+  ],
+  "restored_history": [
+    {
+      "chat_id": 700,
+      "message_id": 1,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "first",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 700,
+      "message_id": 2,
+      "user_id": 9,
+      "username": "hb",
+      "first_name": null,
+      "direction": "out",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "bot reply <b>",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 700,
+      "message_id": 3,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "unprocessed inbound",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": 700,
+      "message_id": 4,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Alice",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "ctrl\u0001chars\u007f and long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long ",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    },
+    {
+      "chat_id": -1007,
+      "message_id": 5,
+      "user_id": 111,
+      "username": "alice",
+      "first_name": "Q\"uote",
+      "direction": "in",
+      "timestamp": "2026-03-14T09:26:53Z",
+      "text": "group & stuff",
+      "reply_to_id": null,
+      "reply_to_text": null,
+      "message_thread_id": null,
+      "raw_update_json": null,
+      "input_flags": []
+    }
+  ]
+}

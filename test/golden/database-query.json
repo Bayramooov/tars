@@ -1,0 +1,307 @@
+{
+  "seed": "130 rows: chat_id=900+(i%3), message_id=i, text 'ok <i>' (1: 'L'*2500, 2: tab/newline)",
+  "cases": [
+    {
+      "sql": "SELECT 1",
+      "is_error": false,
+      "content": "1\n1",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "select 1 as one, 'two' as two, NULL as nothing, 2.5 as num",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "SELECT * FROM messages",
+      "is_error": false,
+      "content": "chat_id\tmessage_id\tuser_id\tusername\tfirst_name\tdirection\ttimestamp\ttext\treply_to_id\treply_to_text\tedited\tdeleted\traw_update_json\treactions\tconsumed\tprocessed\n901\t1\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL…[truncated]\t\t\t0\t0\t\t\t0\t0\n902\t2\t111\talice\tAlice\tin\t2026-03-14 09:26:53\ttab\tand\nnewline\t\t\t0\t0\t\t\t0\t0\n900\t3\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 3\t\t\t0\t0\t\t\t0\t0\n901\t4\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 4\t\t\t0\t0\t\t\t0\t0\n902\t5\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 5\t\t\t0\t0\t\t\t0\t0\n900\t6\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 6\t\t\t0\t0\t\t\t0\t0\n901\t7\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 7\t\t\t0\t0\t\t\t0\t0\n902\t8\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 8\t\t\t0\t0\t\t\t0\t0\n900\t9\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 9\t\t\t0\t0\t\t\t0\t0\n901\t10\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 10\t\t\t0\t0\t\t\t0\t0\n902\t11\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 11\t\t\t0\t0\t\t\t0\t0\n900\t12\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 12\t\t\t0\t0\t\t\t0\t0\n901\t13\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 13\t\t\t0\t0\t\t\t0\t0\n902\t14\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 14\t\t\t0\t0\t\t\t0\t0\n900\t15\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 15\t\t\t0\t0\t\t\t0\t0\n901\t16\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 16\t\t\t0\t0\t\t\t0\t0\n902\t17\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 17\t\t\t0\t0\t\t\t0\t0\n900\t18\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 18\t\t\t0\t0\t\t\t0\t0\n901\t19\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 19\t\t\t0\t0\t\t\t0\t0\n902\t20\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 20\t\t\t0\t0\t\t\t0\t0\n900\t21\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 21\t\t\t0\t0\t\t\t0\t0\n901\t22\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 22\t\t\t0\t0\t\t\t0\t0\n902\t23\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 23\t\t\t0\t0\t\t\t0\t0\n900\t24\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 24\t\t\t0\t0\t\t\t0\t0\n901\t25\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 25\t\t\t0\t0\t\t\t0\t0\n902\t26\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 26\t\t\t0\t0\t\t\t0\t0\n900\t27\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 27\t\t\t0\t0\t\t\t0\t0\n901\t28\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 28\t\t\t0\t0\t\t\t0\t0\n902\t29\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 29\t\t\t0\t0\t\t\t0\t0\n900\t30\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 30\t\t\t0\t0\t\t\t0\t0\n901\t31\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 31\t\t\t0\t0\t\t\t0\t0\n902\t32\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 32\t\t\t0\t0\t\t\t0\t0\n900\t33\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 33\t\t\t0\t0\t\t\t0\t0\n901\t34\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 34\t\t\t0\t0\t\t\t0\t0\n902\t35\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 35\t\t\t0\t0\t\t\t0\t0\n900\t36\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 36\t\t\t0\t0\t\t\t0\t0\n901\t37\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 37\t\t\t0\t0\t\t\t0\t0\n902\t38\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 38\t\t\t0\t0\t\t\t0\t0\n900\t39\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 39\t\t\t0\t0\t\t\t0\t0\n901\t40\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 40\t\t\t0\t0\t\t\t0\t0\n902\t41\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 41\t\t\t0\t0\t\t\t0\t0\n900\t42\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 42\t\t\t0\t0\t\t\t0\t0\n901\t43\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 43\t\t\t0\t0\t\t\t0\t0\n902\t44\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 44\t\t\t0\t0\t\t\t0\t0\n900\t45\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 45\t\t\t0\t0\t\t\t0\t0\n901\t46\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 46\t\t\t0\t0\t\t\t0\t0\n902\t47\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 47\t\t\t0\t0\t\t\t0\t0\n900\t48\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 48\t\t\t0\t0\t\t\t0\t0\n901\t49\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 49\t\t\t0\t0\t\t\t0\t0\n902\t50\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 50\t\t\t0\t0\t\t\t0\t0\n900\t51\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 51\t\t\t0\t0\t\t\t0\t0\n901\t52\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 52\t\t\t0\t0\t\t\t0\t0\n902\t53\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 53\t\t\t0\t0\t\t\t0\t0\n900\t54\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 54\t\t\t0\t0\t\t\t0\t0\n901\t55\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 55\t\t\t0\t0\t\t\t0\t0\n902\t56\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 56\t\t\t0\t0\t\t\t0\t0\n900\t57\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 57\t\t\t0\t0\t\t\t0\t0\n901\t58\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 58\t\t\t0\t0\t\t\t0\t0\n902\t59\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 59\t\t\t0\t0\t\t\t0\t0\n900\t60\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 60\t\t\t0\t0\t\t\t0\t0\n901\t61\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 61\t\t\t0\t0\t\t\t0\t0\n902\t62\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 62\t\t\t0\t0\t\t\t0\t0\n900\t63\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 63\t\t\t0\t0\t\t\t0\t0\n901\t64\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 64\t\t\t0\t0\t\t\t0\t0\n902\t65\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 65\t\t\t0\t0\t\t\t0\t0\n900\t66\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 66\t\t\t0\t0\t\t\t0\t0\n901\t67\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 67\t\t\t0\t0\t\t\t0\t0\n902\t68\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 68\t\t\t0\t0\t\t\t0\t0\n900\t69\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 69\t\t\t0\t0\t\t\t0\t0\n901\t70\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 70\t\t\t0\t0\t\t\t0\t0\n902\t71\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 71\t\t\t0\t0\t\t\t0\t0\n900\t72\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 72\t\t\t0\t0\t\t\t0\t0\n901\t73\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 73\t\t\t0\t0\t\t\t0\t0\n902\t74\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 74\t\t\t0\t0\t\t\t0\t0\n900\t75\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 75\t\t\t0\t0\t\t\t0\t0\n901\t76\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 76\t\t\t0\t0\t\t\t0\t0\n902\t77\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 77\t\t\t0\t0\t\t\t0\t0\n900\t78\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 78\t\t\t0\t0\t\t\t0\t0\n901\t79\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 79\t\t\t0\t0\t\t\t0\t0\n902\t80\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 80\t\t\t0\t0\t\t\t0\t0\n900\t81\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 81\t\t\t0\t0\t\t\t0\t0\n901\t82\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 82\t\t\t0\t0\t\t\t0\t0\n902\t83\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 83\t\t\t0\t0\t\t\t0\t0\n900\t84\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 84\t\t\t0\t0\t\t\t0\t0\n901\t85\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 85\t\t\t0\t0\t\t\t0\t0\n902\t86\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 86\t\t\t0\t0\t\t\t0\t0\n900\t87\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 87\t\t\t0\t0\t\t\t0\t0\n901\t88\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 88\t\t\t0\t0\t\t\t0\t0\n902\t89\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 89\t\t\t0\t0\t\t\t0\t0\n900\t90\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 90\t\t\t0\t0\t\t\t0\t0\n901\t91\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 91\t\t\t0\t0\t\t\t0\t0\n902\t92\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 92\t\t\t0\t0\t\t\t0\t0\n900\t93\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 93\t\t\t0\t0\t\t\t0\t0\n901\t94\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 94\t\t\t0\t0\t\t\t0\t0\n902\t95\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 95\t\t\t0\t0\t\t\t0\t0\n900\t96\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 96\t\t\t0\t0\t\t\t0\t0\n901\t97\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 97\t\t\t0\t0\t\t\t0\t0\n902\t98\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 98\t\t\t0\t0\t\t\t0\t0\n900\t99\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 99\t\t\t0\t0\t\t\t0\t0\n901\t100\t111\talice\tAlice\tin\t2026-03-14 09:26:53\tok 100\t\t\t0\t0\t\t\t0\t0",
+      "data": {
+        "row_count": 100
+      }
+    },
+    {
+      "sql": "SELECT chat_id, COUNT(*) AS n FROM messages GROUP BY chat_id ORDER BY chat_id",
+      "is_error": false,
+      "content": "chat_id\tn\n900\t43\n901\t44\n902\t43",
+      "data": {
+        "row_count": 3
+      }
+    },
+    {
+      "sql": "WITH recent AS (SELECT * FROM messages ORDER BY timestamp DESC LIMIT 5) SELECT message_id FROM recent ORDER BY message_id",
+      "is_error": false,
+      "content": "message_id\n126\n127\n128\n129\n130",
+      "data": {
+        "row_count": 5
+      }
+    },
+    {
+      "sql": "SELECT text FROM messages ORDER BY message_id DESC LIMIT 2",
+      "is_error": false,
+      "content": "text\nok 130\nok 129",
+      "data": {
+        "row_count": 2
+      }
+    },
+    {
+      "sql": "SELECT message_id FROM messages ORDER BY message_id LIMIT 120",
+      "is_error": false,
+      "content": "message_id\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n49\n50\n51\n52\n53\n54\n55\n56\n57\n58\n59\n60\n61\n62\n63\n64\n65\n66\n67\n68\n69\n70\n71\n72\n73\n74\n75\n76\n77\n78\n79\n80\n81\n82\n83\n84\n85\n86\n87\n88\n89\n90\n91\n92\n93\n94\n95\n96\n97\n98\n99\n100",
+      "data": {
+        "row_count": 100
+      }
+    },
+    {
+      "sql": "SELECT message_id FROM messages ORDER BY message_id LIMIT 3 OFFSET 2",
+      "is_error": false,
+      "content": "message_id\n3\n4\n5",
+      "data": {
+        "row_count": 3
+      }
+    },
+    {
+      "sql": "SELECT message_id FROM messages ORDER BY message_id LIMIT -1",
+      "is_error": false,
+      "content": "message_id\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n49\n50\n51\n52\n53\n54\n55\n56\n57\n58\n59\n60\n61\n62\n63\n64\n65\n66\n67\n68\n69\n70\n71\n72\n73\n74\n75\n76\n77\n78\n79\n80\n81\n82\n83\n84\n85\n86\n87\n88\n89\n90\n91\n92\n93\n94\n95\n96\n97\n98\n99\n100",
+      "data": {
+        "row_count": 100
+      }
+    },
+    {
+      "sql": "SELECT message_id FROM messages ORDER BY message_id",
+      "is_error": false,
+      "content": "message_id\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n49\n50\n51\n52\n53\n54\n55\n56\n57\n58\n59\n60\n61\n62\n63\n64\n65\n66\n67\n68\n69\n70\n71\n72\n73\n74\n75\n76\n77\n78\n79\n80\n81\n82\n83\n84\n85\n86\n87\n88\n89\n90\n91\n92\n93\n94\n95\n96\n97\n98\n99\n100",
+      "data": {
+        "row_count": 100
+      }
+    },
+    {
+      "sql": "SELECT length(text) FROM messages WHERE message_id = 1",
+      "is_error": false,
+      "content": "length(text)\n2500",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "SELECT text FROM messages WHERE message_id = 1",
+      "is_error": false,
+      "content": "text\nLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL…[truncated]",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "SELECT 1;",
+      "is_error": false,
+      "content": "1\n1",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "SELECT 1; DROP TABLE messages;",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "SELECT 1; SELECT 2",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "INSERT INTO messages(chat_id) VALUES (1)",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "DELETE FROM messages",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "UPDATE messages SET text='x'",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "REPLACE INTO messages(chat_id) VALUES (1)",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "PRAGMA journal_mode",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "PRAGMA table_info(messages)",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "ATTACH DATABASE '/tmp/x' AS x",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "DETACH DATABASE x",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "DROP TABLE messages",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "CREATE TABLE foo(x INT)",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "ALTER TABLE messages ADD COLUMN y INT",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "VACUUM",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "BEGIN",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "EXPLAIN SELECT 1",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "VALUES (1)",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "WITH bad AS (DELETE FROM messages RETURNING *) SELECT * FROM bad",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "WITH x AS (SELECT 1 AS a) INSERT INTO messages(chat_id) SELECT a FROM x",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "SELECT * FROM sqlite_master WHERE type='table' ORDER BY name",
+      "is_error": false,
+      "content": "type\tname\ttbl_name\trootpage\tsql\ntable\tmessages\tmessages\t3\tCREATE TABLE messages (\n    chat_id          INTEGER NOT NULL,\n    message_id       INTEGER NOT NULL,\n    user_id          INTEGER NOT NULL,\n    username         TEXT,\n    first_name       TEXT,\n    direction        TEXT NOT NULL CHECK (direction IN ('in','out')),\n    timestamp        TEXT NOT NULL,\n    text             TEXT NOT NULL,\n    reply_to_id      INTEGER,\n    reply_to_text    TEXT,\n    edited           INTEGER DEFAULT 0,\n    deleted          INTEGER DEFAULT 0,\n    raw_update_json  TEXT,\n    reactions        TEXT,               -- JSON {\"👍\": [user_id, ...]}; NULL when none\n    consumed         INTEGER DEFAULT 0,  -- handed to Claude Code; inbound rows still at 0 are replayed at boot\n    processed        INTEGER DEFAULT 0,  -- its turn finished cleanly; only these enter a restored-context digest\n    PRIMARY KEY (chat_id, message_id)\n)\ntable\trate_limits\trate_limits\t11\tCREATE TABLE rate_limits (\n    user_id       INTEGER NOT NULL,\n    bucket_start  INTEGER NOT NULL,            -- unix seconds, floored to the bucket\n    count         INTEGER NOT NULL DEFAULT 0,\n    notice_sent   INTEGER NOT NULL DEFAULT 0,  -- this bucket's one \"too fast\" notice went out\n    PRIMARY KEY (user_id, bucket_start)\n)\ntable\treminders\treminders\t13\tCREATE TABLE reminders (\n    id            INTEGER PRIMARY KEY AUTOINCREMENT,\n    chat_id       INTEGER NOT NULL,\n    user_id       INTEGER NOT NULL,\n    text          TEXT NOT NULL,\n    trigger_at    TEXT NOT NULL,  -- UTC\n    cron_expr     TEXT,           -- NULL for one-shot\n    status        TEXT NOT NULL DEFAULT 'pending'\n                  CHECK (status IN ('pending', 'processing', 'sent', 'cancelled')),\n    created_at    TEXT NOT NULL,\n    auto_seed_key TEXT            -- set on rows seeded at boot; these can't be cancelled from chat\n)\ntable\tschema_migrations\tschema_migrations\t2\tCREATE TABLE schema_migrations ( version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL)\ntable\tsqlite_sequence\tsqlite_sequence\t14\tCREATE TABLE sqlite_sequence(name,seq)\ntable\ttool_calls\ttool_calls\t10\tCREATE TABLE tool_calls (\n    id             INTEGER PRIMARY KEY,\n    tool_name      TEXT NOT NULL,\n    args_json      TEXT NOT NULL,\n    result_json    TEXT,\n    error          TEXT,\n    duration_ms    INTEGER,\n    created_at     TEXT NOT NULL\n)\ntable\tunauthorized_messages\tunauthorized_messages\t17\tCREATE TABLE unauthorized_messages (\n    id            INTEGER PRIMARY KEY,\n    chat_id       INTEGER NOT NULL,\n    chat_type     TEXT,\n    message_id    INTEGER NOT NULL,\n    user_id       INTEGER NOT NULL,\n    username      TEXT,\n    first_name    TEXT,\n    timestamp     TEXT NOT NULL,\n    text          TEXT NOT NULL,\n    refusal_sent  INTEGER NOT NULL DEFAULT 0  -- this row triggered the chat's one-time refusal reply\n)\ntable\tusers\tusers\t8\tCREATE TABLE users (\n    chat_id           INTEGER NOT NULL,\n    user_id           INTEGER NOT NULL,\n    username          TEXT,\n    first_name        TEXT,\n    join_date         TEXT NOT NULL,\n    last_message_date TEXT,\n    message_count     INTEGER DEFAULT 0,\n    PRIMARY KEY (chat_id, user_id)\n)",
+      "data": {
+        "row_count": 8
+      }
+    },
+    {
+      "sql": "SELECT name FROM pragma_table_info('messages')",
+      "is_error": false,
+      "content": "name\nchat_id\nmessage_id\nuser_id\nusername\nfirst_name\ndirection\ntimestamp\ntext\nreply_to_id\nreply_to_text\nedited\ndeleted\nraw_update_json\nreactions\nconsumed\nprocessed",
+      "data": {
+        "row_count": 16
+      }
+    },
+    {
+      "sql": "SELECT load_extension('x')",
+      "is_error": true,
+      "content": "sql error: not authorized",
+      "data": null
+    },
+    {
+      "sql": "SELECT * FROM no_such_table",
+      "is_error": true,
+      "content": "sql error: no such table: no_such_table",
+      "data": null
+    },
+    {
+      "sql": "-- comment\nSELECT 2",
+      "is_error": false,
+      "content": "2\n2",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "/* block */ SELECT 3",
+      "is_error": false,
+      "content": "3\n3",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "SELECT 1 UNION SELECT 2",
+      "is_error": false,
+      "content": "1\n1\n2",
+      "data": {
+        "row_count": 2
+      }
+    },
+    {
+      "sql": "SELECT (SELECT COUNT(*) FROM messages) AS n",
+      "is_error": false,
+      "content": "n\n130",
+      "data": {
+        "row_count": 1
+      }
+    },
+    {
+      "sql": "",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "   ",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "this is not sql",
+      "is_error": true,
+      "content": "rejected: only single read-only SELECT statements are allowed",
+      "data": null
+    },
+    {
+      "sql": "select message_id from messages where text like '%ok%' order by message_id",
+      "is_error": false,
+      "content": "message_id\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n32\n33\n34\n35\n36\n37\n38\n39\n40\n41\n42\n43\n44\n45\n46\n47\n48\n49\n50\n51\n52\n53\n54\n55\n56\n57\n58\n59\n60\n61\n62\n63\n64\n65\n66\n67\n68\n69\n70\n71\n72\n73\n74\n75\n76\n77\n78\n79\n80\n81\n82\n83\n84\n85\n86\n87\n88\n89\n90\n91\n92\n93\n94\n95\n96\n97\n98\n99\n100\n101\n102",
+      "data": {
+        "row_count": 100
+      }
+    }
+  ]
+}
