@@ -8,7 +8,7 @@ import type { SpawnSpec } from './argv.ts';
 
 /** Everything `buildArgv` needs except the session, which changes as the worker learns it. */
 export function spawnSpec(
-  config: Pick<Config, 'claudeCodeBin' | 'model' | 'effort' | 'promptsDir'>,
+  config: Pick<Config, 'claudeCodeBin' | 'model' | 'effort' | 'ownerId' | 'promptsDir'>,
   plugins: Pick<Plugins, 'toolGroups' | 'mcps'>,
   wiring: { mcpConfigPath: string; toolNames: readonly string[]; indexes: () => { skills: string; memory: string } },
 ): (sessionId: string | undefined) => SpawnSpec {
@@ -19,6 +19,7 @@ export function spawnSpec(
       binary: config.claudeCodeBin,
       model: config.model,
       effort: config.effort,
+      ownerId: config.ownerId,
       systemPromptPath: join(config.promptsDir, 'system.md'),
       projectPromptPath: join(config.promptsDir, 'project.md'),
       subagentsPromptPath: join(config.promptsDir, 'subagents.md'),
