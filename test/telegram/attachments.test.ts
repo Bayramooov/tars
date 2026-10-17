@@ -103,16 +103,15 @@ describe('attachment ingest', () => {
     for (const [size, shown] of sizes) expect(await t.ingest(doc('f.pdf', undefined, size))).toBe(`[attachment rejected: filename=f.pdf reason=too_large size=${shown}]`);
   });
 
-  it('saves under a safe name: no separators or NULs, trimmed, at most 120 characters with the extension kept', async () => {
+  it('saves under a safe name: no separators or NULs, trimmed, at most 120 bytes with the extension kept', async () => {
     const t = setup();
     const saved = async (name: string, mime?: string) => /\[attachment: (\S+) /.exec(await t.ingest(doc(name, mime)))?.[1];
     expect(await saved('../../etc/passwd.txt')).toBe(join(t.dir, '111', '10__.._etc_passwd.txt'));
     expect(await saved('a\\b\0c.txt')).toBe(join(t.dir, '111', '10_a_bc.txt'));
     expect(await saved('...', 'application/pdf')).toBe(join(t.dir, '111', '10_file_10'));
     expect(await saved(`${'x'.repeat(130)}.PDF`)).toBe(join(t.dir, '111', `10_${'x'.repeat(116)}.pdf`));
-    // The cap counts code points; nothing is written, since 116 four-byte characters exceed Linux's 255-byte names.
-    t.files.set('doc', NOTHING);
-    expect(await saved(`${'😀'.repeat(130)}.png`)).toBe(join(t.dir, '111', `10_${'😀'.repeat(116)}.png`));
+    // The cap counts bytes, never splitting a character, so the name fits Linux's 255-byte limit.
+    expect(await saved(`${'😀'.repeat(130)}.png`)).toBe(join(t.dir, '111', `10_${'😀'.repeat(29)}.png`));
   });
 
   it('turns a failed download into a marker carrying the error', async () => {
